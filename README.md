@@ -1,2 +1,3 @@
-# dotenv
-Make easy access to the environment variables in your PHP application
+# PHP dotenv
+
+Easy access to your environment variables set in the `.env` file.
