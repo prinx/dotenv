@@ -15,7 +15,11 @@
   "require": {
     "php": ">=5.6.0"
   },
+  "config": {
+    "optimize-autoloader": true
+  },
   "autoload": {
+    "files": ["src/aliases_functions.php"],
     "psr-4": {
       "Prinx\\Dotenv\\": "src/"
     }

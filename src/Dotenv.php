@@ -11,13 +11,12 @@ namespace Prinx\Dotenv;
 class Dotenv
 {
     protected $env = [];
-    protected $path = '.env';
+    protected $path = '';
 
-    public function __construct($path = '.env')
+    public function __construct($path = '')
     {
-        if ($path !== $this->path) {
-            $this->set_path($path);
-        }
+        $path = $path ?: realpath(__DIR__ . '/../../../../.env');
+        $this->setPath($path);
 
         $this->env = \parse_ini_file($this->path);
     }
@@ -52,14 +51,14 @@ class Dotenv
         $this->env[$name] = $value;
     }
 
-    public function add_if_not_exists($name, $value, $section = '')
+    public function addIfNotExists($name, $value, $section = '')
     {
         if (!isset($this->env[$name])) {
             $this->add($name, $value, $section);
         }
     }
 
-    public function set_path($path)
+    public function setPath($path)
     {
         if (!\file_exists($path)) {
             throw new \Exception('Trying to set the env file path but the file ' . $path . ' seems not to exist.');
@@ -67,41 +66,4 @@ class Dotenv
 
         $this->path = $path;
     }
-}
-
-class DotenvInstance
-{
-    protected static $env_instance = null;
-
-    public static function get()
-    {
-        // $self = new self();
-        if (self::$env_instance === null) {
-            self::$env_instance = new Dotenv();
-        }
-
-        return self::$env_instance;
-    }
-}
-
-function env($name = null, $default = null)
-{
-    $env = DotenvInstance::get();
-
-    switch (\func_num_args()) {
-        case 0:
-            return $env;
-        case 1:
-            return \call_user_func([$env, 'get'], $name);
-
-        default:
-            return \call_user_func([$env, 'get'], $name, $default);
-    }
-}
-
-function add_env($name, $value, $section = '')
-{
-    $env = DotenvInstance::get();
-
-    \call_user_func([$env, 'set'], $name, $value, $section);
 }
