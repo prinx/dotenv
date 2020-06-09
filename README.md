@@ -9,7 +9,7 @@ Easy access to your environment variables set in the .env file.
 ## USAGE
 
 ```php
-require_once __DIR__ . '/vendor/prinx/dotenv/Dotenv.php';
+require_once __DIR__ . '/path/to/vendor/autoload.php';
 
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\set_env;
