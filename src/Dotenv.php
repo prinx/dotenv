@@ -12,70 +12,158 @@ class Dotenv
 {
     protected $env = [];
     protected $path = '';
-    protected $pattern = '/^[^#;][a-zA-Z0-9_]+[ ]*=*[ ]*.*/';
+    protected $section_separator = '.';
 
     public function __construct($path = '')
     {
         $path = $path ?: realpath(__DIR__ . '/../../../../.env');
         $this->setPath($path);
-        $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
+
+        try {
+            $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
+        } catch (\Throwable $th) {
+            throw new \Exception('An error happened when parsing the .env file: ' . $th->getMessage());
+        }
 
         $this->replaceReferences();
     }
 
     public function replaceReferences()
     {
-        foreach ($this->env as $name => $value) {
-            $matches = [];
-            $pattern = '/\$[^$#;][a-zA-Z0-9_]+[ ]*/';
+        $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
+        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*(.*\$\{([a-zA-Z0-9_]+)\}.*)/';
 
-            if (preg_match($pattern, $value, $matches)) {
-                foreach ($matches as $match) {
-                    if (strpos($match, '$$') === 0) {
-                        continue;
-                    }
+        foreach ($env as $line) {
+            if (preg_match($pattern, $line, $matches)) {
+                $ref = $matches[3];
 
-                    if (!$this->envVariableExists($match)) {
-                        throw new \Exception('Error in the .env file (' . $this->file . ")\n$" . $match . ' does not refer to any value');
-                    }
-
-                    $match = \substr($match, 1, strlen($match) - 1);
-
-                    $value = preg_replace($pattern, $this->env[$match], $value);
-                    $this->env[$name] = $value;
+                if (!$this->envVariableExists($ref)) {
+                    return null;
                 }
+
+                $ref_value = $this->env[$ref];
+                $line_value = $matches[2];
+
+                $line_value_formatted = preg_replace('/\$\{[a-zA-Z0-9_]+\}/', $ref_value, $line_value);
+
+                $line_value_formatted = $this->properValueOfRef($ref_value, $line_value_formatted);
+
+                $this->env[$matches[1]] = $line_value_formatted;
             }
         }
     }
 
-    public function get($name, $default = null)
+    public function properValueOfRef($ref_value, $line_value)
     {
-        $name_exploded = explode('.', $name);
-        $lookup = $this->env;
-        $value = null;
-
-        foreach ($name_exploded as $variable_name) {
-            $name_exists_in_env = isset($lookup[$name]);
-
-            if (!$name_exists_in_env && \func_num_args() < 2) {
-                throw new \Exception('Variable "' . $name . '" not defined in the .env file. You can either add the variable to the .env file or pass a second value to the function that will be return if the variable is not define in the .env file.');
-            }
-
-            $value = $lookup[$name];
-            $lookup = $lookup[$name];
+        if ($this->valueSameAsReference($ref_value, $line_value)) {
+            settype($line_value, gettype($ref_value));
         }
 
-        return $name_exists_in_env ? $value : $default;
+        return $line_value;
+    }
+
+    public function valueSameAsReference($ref_value, $line_value)
+    {
+        $ref_value_string = '';
+        $ref_value_type = gettype($ref_value);
+
+        if ($this->isStringifiable($ref_value)) {
+            $ref_value_string = strval($line_value);
+        }
+
+        return $ref_value_string === $line_value;
+    }
+
+    // Thanks to https://stackoverflow.com/a/5496674
+    public function isStringifiable($var)
+    {
+        return (
+            !is_array($var) &&
+            ((!is_object($var) && settype($var, 'string') !== false) ||
+                (is_object($var) && method_exists($var, '__toString')))
+        );
+    }
+
+    public function all()
+    {
+        return $this->env;
+    }
+
+    public function get($name = null, $default = null)
+    {
+        if (\func_num_args() === 0) {
+            return $this->all();
+        }
+
+        if (isset($this->env[$name])) {
+            return $this->env[$name];
+        } elseif ($value = getenv($name)) {
+            return $value;
+        }
+
+        $name_exploded = explode($this->section_separator, $name);
+        $lookup = $this->env;
+        $value = false;
+
+        $last_index = count($name_exploded) - 1;
+        foreach ($name_exploded as $key => $variable_name) {
+            if (!$variable_name) {
+                return false;
+            }
+
+            if (isset($lookup[$variable_name])) {
+                if (!is_array($value) && $key < $last_index) {
+                    return false;
+                }
+
+                $lookup = $value;
+            } else {
+                return \func_num_args() < 2 ? getenv($variable_name) : $default;
+            }
+        }
+
+        return $value;
     }
 
     /**
      * Section not yet support
      */
-    public function add($name, $value, $section = '')
+    public function add($name, $value)
     {
-        $this->env[$name] = $value;
+        $name_exploded = explode($this->section_separator, $name);
+
+        $namespace_count = count($name_exploded);
+
+        if ($namespace_count === 1) {
+            return $this->env[$name] = $value;
+        }
+
+        $this->env[$name_exploded[0]] = $this->nextArrayValue(
+            $value,
+            $name_exploded,
+            1,
+            $namespace_count - 1
+        );
     }
 
+    public function nextArrayValue(
+        $value_to_insert,
+        $name_indexes,
+        $current_index,
+        $last_index
+    ) {
+        return $current_index === $last_index ?
+        $value_to_insert :
+        [
+            $name_indexes[$current_index] =>
+            $this->nextArrayValue(
+                $value_to_insert,
+                $name_indexes,
+                $current_index + 1,
+                $last_index
+            ),
+        ];
+    }
     /**
      * Write a new environment variable to the .env file
      *
@@ -98,10 +186,10 @@ class Dotenv
 
     public function envVariableExists($name)
     {
-        return isset($this->data[$name]);
+        return isset($this->env[$name]);
     }
 
-    // https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
+    // Thanks to https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
     public function getLineWithString($fileName, $str)
     {
         $lines = file($fileName);
@@ -112,8 +200,6 @@ class Dotenv
         }
         return -1;
     }
-
-    // https://stackoverflow.com/questions/3004041/how-to-replace-a-particular-line-in-a-text-file-using-php
 
     public function addIfNotExists($name, $value, $section = '')
     {

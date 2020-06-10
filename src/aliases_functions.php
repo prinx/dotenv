@@ -11,7 +11,7 @@ function env($name = null, $default = null)
 
     switch (\func_num_args()) {
         case 0:
-            return $env;
+            return \call_user_func([$env, 'all']);
         case 1:
             return \call_user_func([$env, 'get'], $name);
 
@@ -20,9 +20,28 @@ function env($name = null, $default = null)
     }
 }
 
-function addEnv($name, $value, $section = '')
+function addEnv($name, $value)
 {
     $env = DotenvInstance::get();
 
-    \call_user_func([$env, 'set'], $name, $value, $section);
+    \call_user_func([$env, 'add'], $name, $value);
+}
+
+function persistEnv($name, $value)
+{
+    $env = DotenvInstance::get();
+
+    \call_user_func([$env, 'persist'], $name, $value);
+}
+
+function allEnv()
+{
+    $env = DotenvInstance::get();
+
+    \call_user_func([$env, 'all']);
+}
+
+function dotenv()
+{
+    return DotenvInstance::get();
 }

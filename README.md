@@ -15,9 +15,11 @@
     - [Using the `env()` function](#using-the-env-function)
   - [Details on setting environment variables](#details-on-setting-environment-variables)
     - [Using the `addEnv()` function](#using-the-addenv-function)
-  - [The main package class](#the-main-package-class)
+  - [The main class instance](#the-main-class-instance)
     - [Getting a variable](#getting-a-variable)
+    - [Getting all variables](#getting-all-variables)
     - [Adding a variable](#adding-a-variable)
+    - [Persisting a variable (writing in the .env file)](#persisting-a-variable-writing-in-the-env-file)
 # PHP Dotenv
 Get easily access to your environment variables set in your .env file.
 
@@ -37,7 +39,7 @@ use function Prinx\Dotenv\addEnv;
 
 /*
  * 1. Retrieve an environment
- * 1.1. Without a default value
+ * 1.1. Without a default value, will return false if variable not found
  */
 $hostname = env('DEV_DB_HOST');
 
@@ -63,6 +65,13 @@ addEnv('LOG_LEVEL', 'info');
 persistEnv('LOG_LEVEL', 'warn');
 persistEnv('LOG_LEVEL', 'debug', false);
 persistEnv('LOG_LEVEL', 'info');
+
+/*
+ * 4. Get all variables from the .env file
+ */
+env()
+// OR
+allEnv();
 ```
 Now let's see the format of a typical .env file.
 
@@ -200,10 +209,10 @@ $db_driver = env('DB.DRIVER');
 $session_driver = env('SESSION.DRIVER');
 ```
 ### Referring to another variable
-You can refer to the value of another variable in your .env file:
+You can refer to the value of another variable in your .env file by putting the name of the variable you are referring to variable inside ${}:
 ```ini
 SESSION_DRIVER=MySQL
-INFO=App based on $SESSION_DRIVER database
+INFO=App based on ${SESSION_DRIVER} database
 ```
 ```php
 // PHP
@@ -239,7 +248,7 @@ You can pass a default value that will be return if the variable is not found in
 $hostname = env('DEV_DB_HOST', 'localhost');
 ```
 
-***Note**: If the variable is not defined in the .env file and no default value has been provided, an exception will be thrown.*
+***Note**: If the variable is not defined in the .env file and no default value has been provided, the boolean value false will be returned.*
 
 ```php
 // An exception will be thrown if DEV_DB_HOST does not exist in the .env
@@ -270,47 +279,46 @@ use function Prinx\Dotenv\addEnv;
 addEnv('GUEST_NAME', 'john');
 ```
 
-## The main package class
+## The main class instance
 
 You can also get or set a variable using the Dotenv class instance:
 
-You access the main package class by calling the `env()` function without any parameter:
+You access the main package class by calling the `dotenv()` function without any parameter:
 
 ```php
 // Top of the file
-// We no more need to use function Prinx\Dotenv\addEnv; to be able to set a variable
-use function Prinx\Dotenv\env;
+use function Prinx\Dotenv\dotenv;
 ```
 
 ### Getting a variable
-
-Then you use its `get()` static method to have access to the variables.
-
 ```php
-$hostname = env()::get('DEV_DB_HOST');
+$hostname = dotenv()->get('DEV_DB_HOST');
 
 // With a default value
-$hostname = env()::get('DEV_DB_HOST', 'localhost');
+$hostname = dotenv()->get('DEV_DB_HOST', 'localhost');
 ```
 
 or maybe:
 
 ```php
-$env = env();
-$hostname = $env::get('DEV_DB_HOST', 'localhost');
+$env = dotenv();
+$hostname = $env->get('DEV_DB_HOST', 'localhost');
+```
+### Getting all variables
+```php
+$hostname = dotenv()->all();
+
+// or use get without any parameter
+$hostname = dotenv()->get();
 ```
 
 ### Adding a variable
 
-Use the `add()` static method to add a variable.
-
 ```php
-env()::add('GUEST_NAME', 'john');
+dotenv()->add('GUEST_NAME', 'john');
 ```
-
-or
+### Persisting a variable (writing in the .env file)
 
 ```php
-$env = env();
-$env::add('GUEST_NAME', 'john');
+dotenv()->persist('GUEST_NAME', 'john');
 ```
