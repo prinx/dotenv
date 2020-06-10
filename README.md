@@ -8,15 +8,15 @@
         - [Integer](#integer)
         - [Boolean](#boolean)
         - [Array](#array)
-      - [Section support](#section-support)
-      - [Referring to another variable](#referring-to-another-variable)
-    - [Details on retrieving environment variables](#details-on-retrieving-environment-variables)
-      - [Using the `env()` function](#using-the-env-function)
-    - [Details on setting environment variables](#details-on-setting-environment-variables)
-      - [Using the `addEnv()` function](#using-the-addenv-function)
-    - [The main package class](#the-main-package-class)
-      - [Getting a variable](#getting-a-variable)
-      - [Adding a variable](#adding-a-variable)
+    - [Section support](#section-support)
+    - [Referring to another variable](#referring-to-another-variable)
+  - [Details on retrieving environment variables](#details-on-retrieving-environment-variables)
+    - [Using the `env()` function](#using-the-env-function)
+  - [Details on setting environment variables](#details-on-setting-environment-variables)
+    - [Using the `addEnv()` function](#using-the-addenv-function)
+  - [The main package class](#the-main-package-class)
+    - [Getting a variable](#getting-a-variable)
+    - [Adding a variable](#adding-a-variable)
 # PHP Dotenv
 Get easily access to your environment variables set in your .env file.
 
@@ -66,7 +66,7 @@ persistEnv('LOG_LEVEL', 'info');
 Now let's see the format of a typical .env file.
 
 ### Writing a .env file
-*Note: The basic .env file format is basically the same as a .INI file. You can skip this part and continue [here](#refer_to_variable) If you already know how to write a .INI file.*
+*Note: The basic .env file format is basically the same as a .INI file. You can skip this part and continue [here](#referring-to-another-variable) If you already know how to write a .INI file.*
 
 The basic .env file format for most application will be:
 ```ini
@@ -153,7 +153,7 @@ array(2) {
 
 The first engine is mariadb
 ```
-#### Section support
+### Section support
 The dotenv package support sections in the .env file.
 You define a section by begining a line by the name of the section enclosed in square brackets. When a section is defined, anything below will be consider to be in that particular section until a new section is defined.
 
@@ -191,7 +191,7 @@ To retrieve a specific value directly, you can use a dot to separate the section
 $db_driver = env('DB.DRIVER');
 $session_driver = env('SESSION.DRIVER');
 ```
-#### Referring to another variable
+### Referring to another variable
 You can refer to the value of another variable in your .env file:
 ```ini
 SESSION_DRIVER=MySQL
@@ -202,7 +202,7 @@ INFO=App based on $SESSION_DRIVER database
 echo env('INFO'); // App based on MySQL database
 ```
 
-### Details on retrieving environment variables
+## Details on retrieving environment variables
 
 You need to put a the very top of the file the namespace of the function:
 
@@ -213,7 +213,7 @@ use function Prinx\Dotenv\env;
 
 There are two ways of getting the environment variables: using the `env()` function directly or using the main package class.
 
-#### Using the `env()` function
+### Using the `env()` function
 
 The simple way is to include the `Prinx\Dotenv\env` _function namespace_ at the top of the file and use the `env()` function anywhere in the file.
 
@@ -237,7 +237,7 @@ $hostname = env('DEV_DB_HOST', 'localhost');
 // An exception will be thrown if DEV_DB_HOST does not exist in the .env
 $hostname = env('DEV_DB_HOST');
 ```
-### Details on setting environment variables
+## Details on setting environment variables
 
 ***Note**: Setting an environment variable using the library, will not save the variable into your `.env` file. It will just make the variable accessible to you till the end of the script.*
 
@@ -250,7 +250,7 @@ use function Prinx\Dotenv\env;
 
 Then, there are two ways of setting the environment variables: using the `addEnv` function or using the main package class.
 
-#### Using the `addEnv()` function
+### Using the `addEnv()` function
 
 The simpler way is to include the `Prinx\Dotenv\addEnv` _function namespace_ at the top of the file and use the `addEnv()` function anywhere in the file.
 
@@ -262,7 +262,7 @@ use function Prinx\Dotenv\addEnv;
 addEnv('GUEST_NAME', 'john');
 ```
 
-### The main package class
+## The main package class
 
 You can also get or set a variable using the Dotenv class instance:
 
@@ -274,7 +274,7 @@ You access the main package class by calling the `env()` function without any pa
 use function Prinx\Dotenv\env;
 ```
 
-#### Getting a variable
+### Getting a variable
 
 Then you use its `get()` static method to have access to the variables.
 
@@ -292,7 +292,7 @@ $env = env();
 $hostname = $env::get('DEV_DB_HOST', 'localhost');
 ```
 
-#### Adding a variable
+### Adding a variable
 
 Use the `add()` static method to add a variable.
 
