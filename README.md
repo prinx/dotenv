@@ -1,4 +1,4 @@
-- [Dotenv PHP](#dotenv-php)
+- [PHP Dotenv](#php-dotenv)
   - [Installation](#installation)
   - [Usage](#usage)
     - [Basic](#basic)
@@ -17,7 +17,7 @@
     - [The main package class](#the-main-package-class)
       - [Getting a variable](#getting-a-variable)
       - [Adding a variable](#adding-a-variable)
-# Dotenv PHP
+# PHP Dotenv
 Get easily access to your environment variables set in your .env file.
 
 ## Installation
