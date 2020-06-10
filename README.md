@@ -3,6 +3,7 @@
   - [Usage](#usage)
     - [Basic](#basic)
     - [Writing a .env file](#writing-a-env-file)
+      - [Comments](#comments)
       - [Types of values](#types-of-values)
         - [String](#string)
         - [Integer](#integer)
@@ -78,6 +79,13 @@ PROD_DB_HOST=prod_db_ip
 PROD_DB_PORT=3308 
 ```
 
+#### Comments
+You can write comments in your .env file by preceding the comment by a semi-colon.
+Example:
+```ini
+; The supported driver are file|database
+SESSION_DRIVER=file
+```
 #### Types of values
 The package automatically determines the type of the variables.
 
