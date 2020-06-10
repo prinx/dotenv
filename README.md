@@ -160,7 +160,7 @@ In your code:
 ```php
 $engines = env('ENGINES');
 var_dump($engines);
-echo 'The first engine is '. $engines[0];
+echo 'The first engine is ' . $engines[0];
 ```
 ```
 array(2) {
@@ -190,7 +190,7 @@ In your php code:
 // Will return all the values contained in the section as an array
 $db_params = env('DB');
 var_dump($db_params)
-echo "The database user's name is ".$db_params['USER'];
+echo "The database user's name is " . $db_params['USER'];
 ```
 ```
 array(3) {
@@ -251,8 +251,7 @@ $hostname = env('DEV_DB_HOST', 'localhost');
 ***Note**: If the variable is not defined in the .env file and no default value has been provided, the boolean value false will be returned.*
 
 ```php
-// An exception will be thrown if DEV_DB_HOST does not exist in the .env
-$hostname = env('DEV_DB_HOST');
+$hostname = env('DEV_DB_HOST'); // false if DEV_DB_HOST not in the .env file
 ```
 ## Details on setting environment variables
 
