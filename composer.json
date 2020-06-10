@@ -2,7 +2,7 @@
   "name": "prinx/dotenv",
   "type": "library",
   "description": "Make easy access to the environment variables in your application",
-  "keywords": ["dotenv", "env"],
+  "keywords": ["phpdotenv", "dotenv", "env"],
   "homepage": "https://github.com/Prinx/dotenv",
   "license": "MIT",
   "authors": [{
