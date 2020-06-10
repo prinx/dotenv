@@ -9,11 +9,11 @@ class DotenvInstance
 {
     protected static $env_instance = null;
 
-    public static function get()
+    public static function get($path = null)
     {
         // $self = new self();
         if (self::$env_instance === null) {
-            self::$env_instance = new Dotenv();
+            self::$env_instance = new Dotenv($path);
         }
 
         return self::$env_instance;
