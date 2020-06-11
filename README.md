@@ -92,7 +92,7 @@ PROD_DB_PORT=3308
 You can write comments in your .env file by preceding the comment by a semi-colon.
 Example:
 ```ini
-; The supported driver are file|database
+; The supported drivers are file|database
 SESSION_DRIVER=file
 ```
 #### Types of values
