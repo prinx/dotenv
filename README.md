@@ -33,6 +33,7 @@ composer require prinx/dotenv
 ## Usage
 ### Basic
 ```php
+// Require composer autoload file if it has not been done yet.
 require_once __DIR__ . '/path/to/vendor/autoload.php';
 
 // Use only the one you need
