@@ -246,13 +246,6 @@ $api_key = env('API_KEY');
 
 ## Details on retrieving environment variables
 
-You need to put a the very top of the file the namespace of the function:
-
-```php
-// Top of the file
-use function Prinx\Dotenv\env;
-```
-
 There are two ways of getting the environment variables: using the `env()` function directly or using the main package class.
 
 ### Using the `env()` function
@@ -282,14 +275,7 @@ $hostname = env('DEV_DB_HOST'); // false if DEV_DB_HOST not in the .env file
 
 ***Note**: Setting an environment variable using the library, will not save the variable into your `.env` file. It will just make the variable accessible to you till the end of the script.*
 
-Import the function from its namespace:
-
-```php
-// Top of the file
-use function Prinx\Dotenv\env;
-```
-
-Then, there are two ways of setting the environment variables: using the `addEnv` function or using the main package class.
+There are two ways of setting the environment variables: using the `addEnv` function or using the main package class.
 
 ### Using the `addEnv()` function
 
