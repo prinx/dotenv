@@ -19,7 +19,7 @@
     "optimize-autoloader": true
   },
   "autoload": {
-    "files": ["src/aliases_functions.php"],
+    "files": ["src/env.php"],
     "psr-4": {
       "Prinx\\Dotenv\\": "src/"
     }
