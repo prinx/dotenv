@@ -11,6 +11,7 @@
         - [Array](#array)
     - [Section support](#section-support)
     - [Referring to another variable](#referring-to-another-variable)
+  - [Loading a specific .env file](#loading-a-specific-env-file)
   - [Details on retrieving environment variables](#details-on-retrieving-environment-variables)
     - [Using the `env()` function](#using-the-env-function)
   - [Details on setting environment variables](#details-on-setting-environment-variables)
@@ -34,8 +35,10 @@ composer require prinx/dotenv
 ```php
 require_once __DIR__ . '/path/to/vendor/autoload.php';
 
+// Use only the one you need
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\addEnv;
+use function Prinx\Dotenv\persistEnv;
 
 /*
  * 1. Retrieve an environment
@@ -218,6 +221,27 @@ INFO=App based on ${SESSION_DRIVER} database
 // PHP
 echo env('INFO'); // App based on MySQL database
 ```
+## Loading a specific .env file
+The package allows you to load a `.env` file from anywhere.
+
+You can use the `loadEnv` function to achieve this.
+```php
+// Require composer autoload file if it has not been done yet.
+require_once __DIR__ . '/path/to/vendor/autoload.php';
+
+use function Prinx\Dotenv\env;
+
+// use the loadEnv function
+use function Prinx\Dotenv\loadEnv;
+
+// Load the specific env file
+$env_path = __DIR__ . '/path/to/somewhere/.env';
+loadEnv($env_path);
+
+// Everything goes as usual
+$api_key = env('API_KEY');
+```
+***Note**: By default the package looks for the `.env` file into your project root folder (actually, the folder that contains the `vendor` directory in which the package has been installed). But you can decide to change where to search the `.env`.*
 
 ## Details on retrieving environment variables
 

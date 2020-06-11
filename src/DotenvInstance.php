@@ -9,13 +9,17 @@ class DotenvInstance
 {
     protected static $env_instance = null;
 
-    public static function get($path = null)
+    public static function get()
     {
-        // $self = new self();
-        if (self::$env_instance === null) {
-            self::$env_instance = new Dotenv($path);
+        if (!self::$env_instance) {
+            self::load();
         }
 
         return self::$env_instance;
+    }
+
+    public static function load($path = null)
+    {
+        self::$env_instance = new Dotenv($path);
     }
 }

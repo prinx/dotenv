@@ -45,3 +45,8 @@ function dotenv()
 {
     return DotenvInstance::get();
 }
+
+function loadEnv($path = null)
+{
+    DotenvInstance::load($path);
+}
