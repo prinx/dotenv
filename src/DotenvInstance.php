@@ -12,10 +12,20 @@ require_once 'Dotenv.php';
 
 use Prinx\Dotenv\Dotenv;
 
+/**
+ * Singleton class keeping the Dotenv instance
+ */
 class DotenvInstance
 {
     protected static $env_instance = null;
 
+    /**
+     * Returns the Dotenv instance
+     * 
+     * It instanciate the Dotenv class if not yet instanciated.
+     *
+     * @return void
+     */
     public static function get()
     {
         if (!self::$env_instance) {
@@ -25,6 +35,12 @@ class DotenvInstance
         return self::$env_instance;
     }
 
+    /**
+     * Initialise the Dotenv instance
+     *
+     * @param string $path Path to the .env file
+     * @return void
+     */
     public static function load($path = null)
     {
         self::$env_instance = new Dotenv($path);

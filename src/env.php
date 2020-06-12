@@ -12,6 +12,16 @@ require_once 'DotenvInstance.php';
 
 use Prinx\Dotenv\DotenvInstance;
 
+/**
+ * Retrieve an environment variable.
+ * 
+ * Look for an environment variables in the current .env file, 
+ * the $_ENV superglobal and using the built-in getenv function
+ *
+ * @param string $name
+ * @param mixed $default
+ * @return void
+ */
 function env($name = null, $default = null)
 {
     $env = DotenvInstance::get();
@@ -27,6 +37,13 @@ function env($name = null, $default = null)
     }
 }
 
+/**
+ * Add a temporary environment variable to the current loaded environment variables
+ *
+ * @param string $name
+ * @param mixed $value
+ * @return void
+ */
 function addEnv($name, $value)
 {
     $env = DotenvInstance::get();
@@ -34,13 +51,27 @@ function addEnv($name, $value)
     \call_user_func([$env, 'add'], $name, $value);
 }
 
-function persistEnv($name, $value)
+/**
+ * Write an environment variable to the loaded .env file
+ *
+ * @param string $name
+ * @param mixed $value
+ * @param bool $overwrite
+ * @param bool $quote_string
+ * @return void
+ */
+function persistEnv($name, $value, $overwrite = true, $quote_string = true)
 {
     $env = DotenvInstance::get();
 
-    \call_user_func([$env, 'persist'], $name, $value);
+    \call_user_func([$env, 'persist'], $name, $value, $overwrite, $quote_string);
 }
 
+/**
+ * Returns all the environment variables in the .env file as an array
+ *
+ * @return void
+ */
 function allEnv()
 {
     $env = DotenvInstance::get();
@@ -48,11 +79,22 @@ function allEnv()
     \call_user_func([$env, 'all']);
 }
 
+/**
+ * Returns the Dotenv instance
+ *
+ * @return void
+ */
 function dotenv()
 {
     return DotenvInstance::get();
 }
 
+/**
+ * Load a specific .env file
+ *
+ * @param string $path
+ * @return void
+ */
 function loadEnv($path = null)
 {
     DotenvInstance::load($path);
