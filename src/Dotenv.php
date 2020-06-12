@@ -17,7 +17,7 @@ class Dotenv
     protected $path = '';
     protected $section_separator = '.';
 
-    public function __construct(string $path = '')
+    public function __construct($path = '')
     {
         $path = $path ?: realpath(__DIR__ . '/../../../../.env');
         $this->setPath($path);
@@ -69,7 +69,7 @@ class Dotenv
      * @param mixed $line_value
      * @return void
      */
-    public function properValueOfRef(mixed $ref_value, mixed $line_value)
+    public function properValueOfRef($ref_value, $line_value)
     {
         if ($this->valueSameAsReference($ref_value, $line_value)) {
             settype($line_value, gettype($ref_value));
@@ -85,7 +85,7 @@ class Dotenv
      * @param mixed $line_value
      * @return void
      */
-    public function valueSameAsReference(mixed $ref_value, mixed $line_value)
+    public function valueSameAsReference($ref_value, $line_value)
     {
         $ref_value_string = '';
         $ref_value_type = gettype($ref_value);
@@ -104,7 +104,7 @@ class Dotenv
      * @return bool
      */
     // Thanks to https://stackoverflow.com/a/5496674
-    public function isStringifiable(mixed $var)
+    public function isStringifiable($var)
     {
         return (
             !is_array($var) &&
@@ -130,7 +130,7 @@ class Dotenv
      * @param mixed $default
      * @return void
      */
-    public function get(string $name = '', mixed $default = null)
+    public function get($name = '', $default = null)
     {
         if (\func_num_args() === 0) {
             return $this->all();
@@ -173,7 +173,7 @@ class Dotenv
      * @param mixed $value
      * @return void
      */
-    public function add(string $name, mixed $value)
+    public function add($name, $value)
     {
         $name_exploded = explode($this->section_separator, $name);
 
@@ -201,10 +201,10 @@ class Dotenv
      * @return mixed
      */
     public function nextArrayValue(
-        mixed $value_to_insert,
-        array $name_indexes,
-        int $current_index,
-        int $last_index
+        $value_to_insert,
+        $name_indexes,
+        $current_index,
+        $last_index
     ) {
         return $current_index === $last_index ?
         $value_to_insert :
@@ -228,10 +228,10 @@ class Dotenv
      * @return void
      */
     public function persist(
-        string $name,
-        mixed $value,
-        bool $overwrite = true,
-        bool $quote_string = true
+        $name,
+        $value,
+        $overwrite = true,
+        $quote_string = true
     ) {
         $pattern = '/' . $name . '[ ]*=.*/';
         $content = \file_get_contents($this->path);
@@ -270,7 +270,7 @@ class Dotenv
      * @param string $str
      * @return int
      */
-    public function getLineWithString(string $fileName, string $str)
+    public function getLineWithString($fileName, $str)
     {
         $lines = file($fileName);
         foreach ($lines as $lineNumber => $line) {
@@ -290,7 +290,7 @@ class Dotenv
      * @param string $section
      * @return void
      */
-    public function addIfNotExists(string $name, mixed $value, string $section = '')
+    public function addIfNotExists($name, $value, $section = '')
     {
         if (!isset($this->env[$name])) {
             $this->add($name, $value, $section);
@@ -303,7 +303,7 @@ class Dotenv
      * @param string $path
      * @return void
      */
-    public function setPath(string $path)
+    public function setPath($path)
     {
         if (!\file_exists($path)) {
             throw new \Exception('Trying to set the env file path but the file ' . $path . ' seems not to exist.');
