@@ -1,27 +1,9 @@
-- [PHP Dotenv](#php-dotenv)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Quick start](#quick-start)
-    - [Writing a .env file](#writing-a-env-file)
-      - [Comments](#comments)
-      - [Types of values](#types-of-values)
-        - [String](#string)
-        - [Integer](#integer)
-        - [Boolean](#boolean)
-        - [Array](#array)
-    - [Section support](#section-support)
-    - [Referring to another variable](#referring-to-another-variable)
-  - [Loading a specific .env file](#loading-a-specific-env-file)
-  - [Details on retrieving environment variables](#details-on-retrieving-environment-variables)
-    - [Using the `env()` function](#using-the-env-function)
-  - [Details on setting environment variables](#details-on-setting-environment-variables)
-    - [Using the `addEnv()` function](#using-the-addenv-function)
-  - [The main class instance](#the-main-class-instance)
-    - [Getting a variable](#getting-a-variable)
-    - [Getting all variables](#getting-all-variables)
-    - [Adding a variable](#adding-a-variable)
-    - [Persisting a variable (writing in the .env file)](#persisting-a-variable-writing-in-the-env-file)
-# PHP Dotenv
+
+<div style="text-align:center;margin-bottom:20px">
+<h1 style="margin-bottom:0">PHP Dotenv</h1>
+
+<a href="https://travis-ci.com/Prinx/dotenv"><img src="https://travis-ci.com/Prinx/dotenv.svg?branch=master"></a> <a href="https://travis-ci.com/Prinx/dotenv"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+</div>
 Get easily access to your environment variables set in your .env file.
 
 ## Installation
