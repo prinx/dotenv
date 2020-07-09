@@ -1,7 +1,7 @@
 - [PHP Dotenv](#php-dotenv)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [Basic](#basic)
+    - [Quick start](#quick-start)
     - [Writing a .env file](#writing-a-env-file)
       - [Comments](#comments)
       - [Types of values](#types-of-values)
@@ -26,12 +26,12 @@ Get easily access to your environment variables set in your .env file.
 
 ## Installation
 Open a command prompt into your project root folder and run:
-```bash
+```console
 composer require prinx/dotenv
 ```
 
 ## Usage
-### Basic
+### Quick start
 ```php
 // Require composer autoload file if it has not been done yet.
 require_once __DIR__ . '/path/to/vendor/autoload.php';
