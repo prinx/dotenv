@@ -9,7 +9,7 @@ before_script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
-script: phpunit vendor/bin/phpunit
+script: sh vendor/bin/phpunit
 
 matrix:
     allow_failures:
