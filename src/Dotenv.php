@@ -311,4 +311,9 @@ class Dotenv
 
         $this->path = $path;
     }
+
+    public function getPath()
+    {
+        return $this->path;
+    }
 }

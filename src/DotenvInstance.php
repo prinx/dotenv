@@ -21,10 +21,10 @@ class DotenvInstance
 
     /**
      * Returns the Dotenv instance
-     * 
+     *
      * It instanciate the Dotenv class if not yet instanciated.
      *
-     * @return void
+     * @return Dotenv
      */
     public static function get()
     {

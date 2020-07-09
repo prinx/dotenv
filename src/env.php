@@ -14,13 +14,13 @@ use Prinx\Dotenv\DotenvInstance;
 
 /**
  * Retrieve an environment variable.
- * 
- * Look for an environment variables in the current .env file, 
+ *
+ * Look for an environment variables in the current .env file,
  * the $_ENV superglobal and using the built-in getenv function
  *
  * @param string $name
  * @param mixed $default
- * @return void
+ * @return mixed
  */
 function env($name = null, $default = null)
 {
@@ -70,7 +70,7 @@ function persistEnv($name, $value, $overwrite = true, $quote_string = true)
 /**
  * Returns all the environment variables in the .env file as an array
  *
- * @return void
+ * @return array
  */
 function allEnv()
 {
@@ -82,7 +82,7 @@ function allEnv()
 /**
  * Returns the Dotenv instance
  *
- * @return void
+ * @return Dotenv
  */
 function dotenv()
 {
