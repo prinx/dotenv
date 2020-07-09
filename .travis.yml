@@ -8,7 +8,7 @@ script: phpunit
 
 matrix:
     allow_failures:
-        - php: 5.6
+        - php: 7.3
         - php: hhvm
 
     fast_finish: true
