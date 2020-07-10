@@ -144,17 +144,17 @@ class Dotenv
 
         $name_exploded = explode($this->section_separator, $name);
         $lookup = $this->env;
-        $value = false;
+        $value = null;
 
         $last_index = count($name_exploded) - 1;
         foreach ($name_exploded as $key => $variable_name) {
             if (!$variable_name) {
-                return false;
+                return null;
             }
 
             if (isset($lookup[$variable_name])) {
                 if (!is_array($value) && $key < $last_index) {
-                    return false;
+                    return null;
                 }
 
                 $lookup = $value;

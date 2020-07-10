@@ -25,7 +25,7 @@ use function Prinx\Dotenv\persistEnv;
 
 /*
  * 1. Retrieve an environment
- * 1.1. Without a default value, will return false if variable not found
+ * 1.1. Without a default value, will return null if variable not found
  */
 $hostname = env('DEV_DB_HOST');
 
@@ -75,7 +75,7 @@ PROD_DB_PORT=3308
 ```
 
 #### Comments
-You can write comments in your .env file by preceding the comment by a semi-colon.
+You can write comments in your .env file by preceding the comment by a hash (`#`) or a semi-colon (`;`).
 Example:
 ```ini
 ; The supported drivers are file|database
@@ -86,7 +86,7 @@ The package automatically determines the type of the variables.
 
 ##### String
 ```ini
-; Will be get as a string
+# The application's title
 DEFAULT_TITLE=My app
 ; or
 DEFAULT_TITLE="My app"
@@ -97,27 +97,27 @@ DB_HOST="173.0.0.0"
 ```
 
 ##### Integer
-Any integer will be get as an integer:
+Any integer will be got as an integer:
 ```ini
-; Will be get as an integer
+; Will be got as an integer
 DB_PORT=3306
 ```
 
 If you will to get an integer as a string, you need to enclose it by quotes:
 ```ini
-; Will be get as a string
+; Will be got as a string
 DB_PORT="3306"
 ```
 ##### Boolean
-The values `true`, `on`, `yes` will be get as the boolean `true`.
-The values `false`, `off`, `no` will be get as the boolean `false`.
+The values `true`, `on`, `yes` will be got as the boolean `true`.
+The values `false`, `off`, `no` will be got as the boolean `false`.
 ```ini
-; Will be get as a boolean true
+; Will be got as a boolean true
 USE_FILE_SESSION=true
 USE_FILE_SESSION=on
 USE_FILE_SESSION=yes
 
-; Will be get as a boolean false
+; Will be got as a boolean false
 USE_FILE_SESSION=false
 USE_FILE_SESSION=off
 USE_FILE_SESSION=no
@@ -126,13 +126,13 @@ USE_FILE_SESSION=no
 If you will to retrieve any of these values true as string you just need to enclose them in quotes:
 
 ```ini
-USE_FILE_SESSION="true" ; Will be get as the string "true"
-USE_FILE_SESSION="on" ; Will be get as the string "on"
-USE_FILE_SESSION="yes" ; Will be get as the string "yes"
+USE_FILE_SESSION="true" ; Will be got as the string "true" and not the boolean true 
+USE_FILE_SESSION="on" ; Will be got as the string "on" ...
+USE_FILE_SESSION="yes" ; Will be got as the string "yes" ...
 
-USE_FILE_SESSION="false" ; Will be get as the string "false"
-USE_FILE_SESSION="off" ; Will be get as the string "off"
-USE_FILE_SESSION="no" ; Will be get as the string "no"
+USE_FILE_SESSION="false" ; Will be got as the string "false" ...
+USE_FILE_SESSION="off" ; Will be got as the string "off" ...
+USE_FILE_SESSION="no" ; Will be got as the string "no" ...
 ```
 
 ##### Array
@@ -227,7 +227,7 @@ $api_key = env('API_KEY');
 ***Note**: By default the package looks for the `.env` file into your project root folder (actually, the folder that contains the `vendor` directory in which the package has been installed). But you can decide to change where to search the `.env`.*
 
 ## Details on retrieving environment variables
-
+> These are just additional details on all the info seen above.
 There are two ways of getting the environment variables: using the `env()` function directly or using the main package class.
 
 ### Using the `env()` function
@@ -255,7 +255,7 @@ $hostname = env('DEV_DB_HOST'); // false if DEV_DB_HOST not in the .env file
 ```
 ## Details on setting environment variables
 
-***Note**: Setting an environment variable using the library, will not save the variable into your `.env` file. It will just make the variable accessible to you till the end of the script.*
+***Note**: Setting an environment variable using the library, will not save the variable into your `.env` file. It will just make the variable accessible to you till the end of the script. To change the variable in the env file itself, use `persistEnv` instead.*
 
 There are two ways of setting the environment variables: using the `addEnv` function or using the main package class.
 
@@ -310,7 +310,7 @@ $hostname = dotenv()->get();
 dotenv()->add('GUEST_NAME', 'john');
 ```
 ### Persisting a variable (writing in the .env file)
-
+Add or change a variable directly in the env file. 
 ```php
 dotenv()->persist('GUEST_NAME', 'john');
 ```
