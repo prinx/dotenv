@@ -22,7 +22,7 @@ use Prinx\Dotenv\DotenvInstance;
  * @param mixed $default
  * @return mixed
  */
-function env($name = null, $default = null)
+function env($key = null, $default = null)
 {
     $env = DotenvInstance::get();
 
@@ -30,10 +30,10 @@ function env($name = null, $default = null)
         case 0:
             return \call_user_func([$env, 'all']);
         case 1:
-            return \call_user_func([$env, 'get'], $name);
+            return \call_user_func([$env, 'get'], $key);
 
         default:
-            return \call_user_func([$env, 'get'], $name, $default);
+            return \call_user_func([$env, 'get'], $key, $default);
     }
 }
 

@@ -26,7 +26,7 @@ class Dotenv
             $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
             $this->env = array_merge($_ENV, $this->env);
         } catch (\Throwable $th) {
-            throw new \Exception('An error happened when parsing the .env file: ' . $th->getMessage());
+            throw new \Exception('An error happened when parsing the <strong>.env</strong> file:<br>' . $th->getMessage());
         }
 
         $this->replaceReferences();
@@ -179,7 +179,7 @@ class Dotenv
 
         $namespace_count = count($name_exploded);
 
-        if ($namespace_count === 1) {
+        if (1 === $namespace_count) {
             return $this->env[$name] = $value;
         }
 
