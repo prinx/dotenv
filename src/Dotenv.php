@@ -136,7 +136,13 @@ class Dotenv
             return $this->all();
         }
 
+        $defaultWasPassed = \func_num_args() === 2;
+
         if (isset($this->env[$name])) {
+            if ('' === $this->env[$name]) {
+                return $defaultWasPassed ? $default : '';
+            }
+
             return $this->env[$name];
         } elseif ($value = getenv($name)) {
             return $value;
@@ -159,7 +165,7 @@ class Dotenv
 
                 $lookup = $value;
             } else {
-                return \func_num_args() < 2 ? getenv($variable_name) : $default;
+                return $defaultWasPassed ? $default : getenv($variable_name);
             }
         }
 
