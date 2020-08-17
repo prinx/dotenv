@@ -1,4 +1,3 @@
-
 <div style="text-align:center;margin-bottom:20px">
 <h1 style="margin-bottom:0">PHP Dotenv</h1>
 
