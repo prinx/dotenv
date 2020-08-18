@@ -7,10 +7,6 @@
  * with this source code in the file LICENSE.
  */
 
-require_once 'DotenvInstance.php';
-
-use Prinx\Dotenv\DotenvInstance;
-
 if (!function_exists('env') || __NAMESPACE__) {
     /**
      * Retrieve an environment variable.
@@ -24,17 +20,7 @@ if (!function_exists('env') || __NAMESPACE__) {
      */
     function env($key = null, $default = null)
     {
-        $env = DotenvInstance::get();
-
-        switch (\func_num_args()) {
-            case 0:
-                return \call_user_func([$env, 'all']);
-            case 1:
-                return \call_user_func([$env, 'get'], $key);
-
-            default:
-                return \call_user_func([$env, 'get'], $key, $default);
-        }
+        return Prinx\Dotenv\env(...(func_get_args()));
     }
 }
 
@@ -48,9 +34,7 @@ if (!function_exists('addEnv') || __NAMESPACE__) {
      */
     function addEnv($name, $value)
     {
-        $env = DotenvInstance::get();
-
-        \call_user_func([$env, 'add'], $name, $value);
+        return Prinx\Dotenv\addEnv($name, $value);
     }
 }
 
@@ -66,9 +50,7 @@ if (!function_exists('persistEnv') || __NAMESPACE__) {
      */
     function persistEnv($name, $value, $overwrite = true, $quote_string = true)
     {
-        $env = DotenvInstance::get();
-
-        \call_user_func([$env, 'persist'], $name, $value, $overwrite, $quote_string);
+        return Prinx\Dotenv\persistEnv(...(func_get_args()));
     }
 }
 
@@ -80,9 +62,7 @@ if (!function_exists('allEnv') || __NAMESPACE__) {
      */
     function allEnv()
     {
-        $env = DotenvInstance::get();
-
-        \call_user_func([$env, 'all']);
+        return Prinx\Dotenv\allEnv();
     }
 }
 
@@ -94,7 +74,7 @@ if (!function_exists('dotenv') || __NAMESPACE__) {
      */
     function dotenv()
     {
-        return DotenvInstance::get();
+        return Prinx\Dotenv\dotenv();
     }
 }
 
@@ -107,6 +87,6 @@ if (!function_exists('loadEnv') || __NAMESPACE__) {
      */
     function loadEnv($path = null)
     {
-        DotenvInstance::load($path);
+        return Prinx\Dotenv\loadEnv($path);
     }
 }

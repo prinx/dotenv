@@ -2,25 +2,25 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\TestCase;
+use Prinx\Dotenv\Dotenv;
 use function Prinx\Dotenv\addEnv;
 use function Prinx\Dotenv\dotenv;
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\loadEnv;
 use function Prinx\Dotenv\persistEnv;
-use PHPUnit\Framework\TestCase;
-use Prinx\Dotenv\Dotenv;
 
 /**
  * @todo The tests need works
  */
-class EnvTest extends TestCase
+class EnvNamespacedTest extends TestCase
 {
     protected $envFile = '';
 
     public function __construct()
     {
         parent::__construct();
-        $this->envFile = realpath(__DIR__ . '/../../.env.example');
+        $this->envFile = realpath(__DIR__.'/../../.env.example');
     }
 
     public function testLoadEnv()
