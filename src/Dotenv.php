@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * (c) Nuna Akpaglo <princedorcis@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
@@ -15,108 +16,27 @@ class Dotenv
 {
     protected $env = [];
     protected $path = '';
-    protected $section_separator = '.';
+    protected $sectionSeparator = '.';
 
     public function __construct($path = '')
     {
-        $path = $path ?: realpath(__DIR__ . '/../../../../.env');
+        $path = $path ?: realpath(__DIR__.'/../../../../.env');
         $this->setPath($path);
 
         try {
             $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
             $this->env = array_merge($_ENV, $this->env);
         } catch (\Throwable $th) {
-            throw new \Exception('An error happened when parsing the <strong>.env</strong> file:<br>' . $th->getMessage());
+            throw new \Exception('An error happened when parsing the <strong>.env</strong> file:<br>'.$th->getMessage());
         }
 
         $this->replaceReferences();
     }
 
     /**
-     * Replace the references in the .env by their respective value
+     * Returns all the environment variables.
      *
-     * @return void
-     */
-    public function replaceReferences()
-    {
-        $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
-        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*(.*\$\{([a-zA-Z0-9_]+)\}.*)/';
-
-        foreach ($env as $line) {
-            if (preg_match($pattern, $line, $matches)) {
-                $ref = $matches[3];
-
-                if (!$this->envVariableExists($ref)) {
-                    return null;
-                }
-
-                $ref_value = $this->env[$ref];
-                $line_value = $matches[2];
-
-                $line_value_formatted = preg_replace('/\$\{[a-zA-Z0-9_]+\}/', $ref_value, $line_value);
-
-                $line_value_formatted = $this->properValueOfRef($ref_value, $line_value_formatted);
-
-                $this->env[$matches[1]] = $line_value_formatted;
-            }
-        }
-    }
-
-    /**
-     * Assign the proper type of the reference to the replaced value
-     *
-     * @param mixed $ref_value
-     * @param mixed $line_value
-     * @return void
-     */
-    public function properValueOfRef($ref_value, $line_value)
-    {
-        if ($this->valueSameAsReference($ref_value, $line_value)) {
-            settype($line_value, gettype($ref_value));
-        }
-
-        return $line_value;
-    }
-
-    /**
-     * Check the value is the same as it reference (It is not inside a sentence for exemple)
-     *
-     * @param mixed $ref_value
-     * @param mixed $line_value
-     * @return void
-     */
-    public function valueSameAsReference($ref_value, $line_value)
-    {
-        $ref_value_string = '';
-        $ref_value_type = gettype($ref_value);
-
-        if ($this->isStringifiable($ref_value)) {
-            $ref_value_string = strval($line_value);
-        }
-
-        return $ref_value_string === $line_value;
-    }
-
-    /**
-     * Check if var can be converted to string
-     *
-     * @param mixed $var
-     * @return bool
-     */
-    // Thanks to https://stackoverflow.com/a/5496674
-    public function isStringifiable($var)
-    {
-        return (
-            !is_array($var) &&
-            ((!is_object($var) && settype($var, 'string') !== false) ||
-                (is_object($var) && method_exists($var, '__toString')))
-        );
-    }
-
-    /**
-     * Returns all the environment variables
-     *
-     * @return void
+     * @return array
      */
     public function all()
     {
@@ -124,11 +44,11 @@ class Dotenv
     }
 
     /**
-     * Get a specific environment variableq
+     * Get a specific environment variable.
      *
-     * @param string $name
-     * @param mixed $default
-     * @return void
+     * @param  string  $name
+     * @param  mixed   $default
+     * @return mixed
      */
     public function get($name = '', $default = null)
     {
@@ -148,24 +68,24 @@ class Dotenv
             return $value;
         }
 
-        $name_exploded = explode($this->section_separator, $name);
+        $nameExploded = explode($this->sectionSeparator, $name);
         $lookup = $this->env;
         $value = null;
 
-        $last_index = count($name_exploded) - 1;
-        foreach ($name_exploded as $key => $variable_name) {
-            if (!$variable_name) {
+        $lastIndex = count($nameExploded) - 1;
+        foreach ($nameExploded as $key => $variableName) {
+            if (!$variableName) {
                 return null;
             }
 
-            if (isset($lookup[$variable_name])) {
-                if (!is_array($value) && $key < $last_index) {
+            if (isset($lookup[$variableName])) {
+                if (!is_array($value) && $key < $lastIndex) {
                     return null;
                 }
 
                 $lookup = $value;
             } else {
-                return $defaultWasPassed ? $default : getenv($variable_name);
+                return $defaultWasPassed ? $default : getenv($variableName);
             }
         }
 
@@ -173,113 +93,207 @@ class Dotenv
     }
 
     /**
-     * Add an environment variables to the currently loaded environment variables
+     * Add an environment variables to the currently loaded environment variables.
      *
-     * @param string $name
-     * @param mixed $value
+     * @param  string $name
+     * @param  mixed  $value
      * @return void
      */
     public function add($name, $value)
     {
-        $name_exploded = explode($this->section_separator, $name);
+        $nameExploded = explode($this->sectionSeparator, $name);
 
-        $namespace_count = count($name_exploded);
+        $namespaceCount = count($nameExploded);
 
-        if (1 === $namespace_count) {
+        if (1 === $namespaceCount) {
             return $this->env[$name] = $value;
         }
 
-        $this->env[$name_exploded[0]] = $this->nextArrayValue(
+        $this->env[$nameExploded[0]] = $this->nextArrayValue(
             $value,
-            $name_exploded,
+            $nameExploded,
             1,
-            $namespace_count - 1
+            $namespaceCount - 1
         );
     }
 
     /**
-     * Returns the array corresponding to the current_index in name_indexes or returns the value_to_insert
+     * Write a new environment variable to the .env file.
      *
-     * @param mixed $value_to_insert
-     * @param array $name_indexes
-     * @param int $current_index
-     * @param int $last_index
-     * @return mixed
-     */
-    public function nextArrayValue(
-        $value_to_insert,
-        $name_indexes,
-        $current_index,
-        $last_index
-    ) {
-        return $current_index === $last_index ?
-        $value_to_insert :
-        [
-            $name_indexes[$current_index] =>
-            $this->nextArrayValue(
-                $value_to_insert,
-                $name_indexes,
-                $current_index + 1,
-                $last_index
-            ),
-        ];
-    }
-    /**
-     * Write a new environment variable to the .env file
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param bool $overwrite
-     * @param bool $overwrite If true, overwrites the variable if it was already in the file
+     * @param  string $name
+     * @param  mixed  $value
+     * @param  bool   $overwrite      If true, overwrites the variable if it was already in the file
+     * @param  bool   $quoteString
      * @return void
      */
-    public function persist(
-        $name,
-        $value,
-        $overwrite = true,
-        $quote_string = true
-    ) {
-        $pattern = '/' . $name . '[ ]*=.*/';
+    public function persist($name, $value, $overwrite = true, $quoteString = true)
+    {
+        $pattern = '/'.$name.'[ ]*=.*/';
         $content = \file_get_contents($this->path);
-        $env_variable_exists = $this->envVariableExists($name) || preg_match($pattern, $content);
+        $envVariableExistsInFile = preg_match($pattern, $content);
+        $envVariableExistsInMemory = $this->envVariableExistsInMemory($name);
 
-        $value = \is_string($value) && $quote_string ? '"' . $value . '"' : $value;
-        $line = $name . "=" . $value;
+        $value = \is_string($value) && $quoteString ? '"'.$value.'"' : $value;
+        $line = $name.'='.$value;
 
-        if ($env_variable_exists && $overwrite) {
+        if ($envVariableExistsInFile && $overwrite) {
             $content = preg_replace($pattern, $line, $content);
-            file_put_contents($this->path, $content);
-            $this->add($name, $value);
-        } elseif (!$env_variable_exists) {
-            $line = $content ? "\n\n" . $line : $line;
-            file_put_contents($this->path, $line, FILE_APPEND);
-            $this->add($name, $value);
+        } elseif (
+            ($envVariableExistsInMemory && $overwrite) ||
+            !$envVariableExistsInMemory ||
+            !$envVariableExistsInFile
+        ) {
+            $content = trim($content)."\n\n".$line;
+        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && !$overwrite) {
+            return;
+        }
+
+        file_put_contents($this->path, $content);
+        $this->add($name, $value);
+    }
+
+    public static function load($path)
+    {
+        return new self($path);
+    }
+
+    /**
+     * Replace the references in the .env by their respective value.
+     *
+     * @return void
+     */
+    protected function replaceReferences()
+    {
+        $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
+        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*(.*\$\{([a-zA-Z0-9_]+)\}.*)/';
+
+        foreach ($env as $line) {
+            if (preg_match($pattern, $line, $matches)) {
+                $ref = $matches[3];
+
+                if (!$this->envVariableExists($ref)) {
+                    return null;
+                }
+
+                $refValue = $this->env[$ref];
+                $lineValue = $matches[2];
+
+                $lineValueFormatted = preg_replace('/\$\{[a-zA-Z0-9_]+\}/', $refValue, $lineValue);
+
+                $lineValueFormatted = $this->properValueOfRef($refValue, $lineValueFormatted);
+
+                $this->env[$matches[1]] = $lineValueFormatted;
+            }
         }
     }
 
     /**
-     * Determines if an environment variables exists
+     * Assign the proper type of the reference to the replaced value.
      *
-     * @param string $name
+     * @param  mixed  $refValue
+     * @param  mixed  $lineValue
+     * @return void
+     */
+    protected function properValueOfRef($refValue, $lineValue)
+    {
+        if ($this->valueSameAsReference($refValue, $lineValue)) {
+            settype($lineValue, gettype($refValue));
+        }
+
+        return $lineValue;
+    }
+
+    /**
+     * Check the value is the same as it reference (It is not inside a sentence for exemple)
+     *
+     * @param  mixed  $refValue
+     * @param  mixed  $lineValue
+     * @return void
+     */
+    protected function valueSameAsReference($refValue, $lineValue)
+    {
+        $refValueString = '';
+        $refValueType = gettype($refValue);
+
+        if ($this->isStringifiable($refValue)) {
+            $refValueString = strval($lineValue);
+        }
+
+        return $refValueString === $lineValue;
+    }
+
+    /**
+     * Check if var can be converted to string.
+     *
+     * @param  mixed  $var
      * @return bool
      */
-    public function envVariableExists($name)
+    // Thanks to https://stackoverflow.com/a/5496674
+    protected function isStringifiable($var)
+    {
+        return (
+            !is_array($var) &&
+            ((!is_object($var) && settype($var, 'string') !== false) ||
+                (is_object($var) && method_exists($var, '__toString')))
+        );
+    }
+
+    /**
+     * Returns the array corresponding to the currentIndex in nameIndexes or returns the valueToInsert
+     *
+     * @param  mixed   $valueToInsert
+     * @param  array   $nameIndexes
+     * @param  int     $currentIndex
+     * @param  int     $lastIndex
+     * @return mixed
+     */
+    protected function nextArrayValue(
+        $valueToInsert,
+        $nameIndexes,
+        $currentIndex,
+        $lastIndex
+    ) {
+        return $currentIndex === $lastIndex ?
+        $valueToInsert :
+        [
+            $nameIndexes[$currentIndex] =>
+            $this->nextArrayValue(
+                $valueToInsert,
+                $nameIndexes,
+                $currentIndex + 1,
+                $lastIndex
+            ),
+        ];
+    }
+
+    /**
+     * Determines if an environment variables exists.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    protected function envVariableExistsInMemory($name)
     {
         return isset($this->env[$name]) || !!getenv($name);
     }
 
+    public function variableExistsInEnvFile($name)
+    {
+
+    }
+
     /**
-     * Get the line number of a string, in a file
+     * Get the line number of a string, in a file.
      *
      * Thanks to https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
-     * @param string $fileName
-     * @param string $str
+     * @param  string $fileName
+     * @param  string $str
      * @return int
      */
-    public function getLineWithString($fileName, $str)
+    protected function getLineWithString($fileName, $str)
     {
         $lines = file($fileName);
-        foreach ($lines as $lineNumber => $line) {
+        foreach ($lines as $line) {
             if (strpos($line, $str) !== false) {
                 return $line;
             }
@@ -289,30 +303,24 @@ class Dotenv
     }
 
     /**
-     * Add a value to the current loaded environment variables if the value is not already there
+     * Add a value to the current loaded environment variables if the value is not already there.
      *
-     * @param string $name
-     * @param mixed $value
-     * @param string $section
+     * @param  string $name
+     * @param  mixed  $value
+     * @param  string $section
      * @return void
      */
-    public function addIfNotExists($name, $value, $section = '')
+    protected function addIfNotExists($name, $value, $section = '')
     {
         if (!isset($this->env[$name])) {
             $this->add($name, $value, $section);
         }
     }
 
-    /**
-     * Set the .env file path
-     *
-     * @param string $path
-     * @return void
-     */
     public function setPath($path)
     {
         if (!\file_exists($path)) {
-            throw new \Exception('Trying to set the env file path but the file ' . $path . ' seems not to exist.');
+            throw new \Exception('Trying to set the env file path but the file '.$path.' seems not to exist.');
         }
 
         $this->path = $path;

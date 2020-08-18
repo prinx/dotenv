@@ -17,11 +17,6 @@ composer require prinx/dotenv
 // Require composer autoload file if it has not been done yet.
 require_once __DIR__ . '/path/to/vendor/autoload.php';
 
-// Use only the one you need
-use function Prinx\Dotenv\env;
-use function Prinx\Dotenv\addEnv;
-use function Prinx\Dotenv\persistEnv;
-
 /*
  * 1. Retrieve an environment
  * 1.1. Without a default value, will return null if variable not found
@@ -61,7 +56,6 @@ allEnv();
 Now let's see the format of a typical .env file.
 
 ### Writing a .env file
-*Note: The basic .env file format is basically the same as a .INI file. You can skip this part and continue [here](#referring-to-another-variable) If you already know how to write a .INI file.*
 
 The basic .env file format for most application will be:
 ```ini

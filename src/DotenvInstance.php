@@ -8,8 +8,6 @@
 
 namespace Prinx\Dotenv;
 
-require_once 'Dotenv.php';
-
 use Prinx\Dotenv\Dotenv;
 
 /**
@@ -17,7 +15,7 @@ use Prinx\Dotenv\Dotenv;
  */
 class DotenvInstance
 {
-    protected static $env_instance = null;
+    protected static $envInstance = null;
 
     /**
      * Returns the Dotenv instance
@@ -28,21 +26,21 @@ class DotenvInstance
      */
     public static function get()
     {
-        if (!self::$env_instance) {
+        if (!self::$envInstance) {
             self::load();
         }
 
-        return self::$env_instance;
+        return self::$envInstance;
     }
 
     /**
      * Initialise the Dotenv instance
      *
-     * @param string $path Path to the .env file
+     * @param  string $path Path to the .env file
      * @return void
      */
     public static function load($path = null)
     {
-        self::$env_instance = new Dotenv($path);
+        self::$envInstance = new Dotenv($path);
     }
 }

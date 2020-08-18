@@ -5,9 +5,6 @@ namespace Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Prinx\Dotenv\Dotenv;
 
-/**
- * @todo The tests need works
- */
 class EnvNoNamespaceTest extends TestCase
 {
     protected $envFile = '';
@@ -26,30 +23,48 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testRetrieveEnvVariable()
     {
-        $this->assertEquals(true, env('EXAMPLE'), 'Retrieve env variable EXAMPLE');
+        $this->assertEquals(true, env('EXAMPLE'), 'Retrieve env variable EXAMPLE with env()');
+        $this->assertEquals(true, dotenv()->get('EXAMPLE'), 'Retrieve env variable EXAMPLE with dotenv()->get()');
+    }
+
+    public function testRetrieveAllEnvVariables()
+    {
+        $this->assertTrue(env() == ['EXAMPLE' => true], 'Retrieving all env variables using env()');
+        $this->assertTrue(allEnv() == ['EXAMPLE' => true], 'Retrieving all env variables using allEnv()');
+        $this->assertTrue(dotenv()->all() == ['EXAMPLE' => true], 'Retrieving all env variables using dotenv()->all()');
     }
 
     public function testAddEnvVariable()
     {
         addEnv('EXAMPLE_2', 'Yes');
         $this->assertEquals('Yes', env('EXAMPLE_2'), 'add env variable EXAMPLE_2');
+
+        dotenv()->add('EXAMPLE_3', 'No');
+        $this->assertEquals('No', env('EXAMPLE_3'), 'add env variable EXAMPLE_3 using dotenv()->add()');
     }
 
-    public function testPersisitEnvVariable()
+    public function testPersistEnvVariable()
     {
-        // The test will modify the env file.
-        // We Save the content of the file to bde able to revert it back later
         $content = file_get_contents($this->envFile);
 
-        // Test
         persistEnv('PERSISTENCE', 'all_good');
 
-        // Reload the env to get all the variables from the env file instead
-        // of the memory-cached env array
         loadEnv($this->envFile);
-        $this->assertEquals('all_good', env('PERSISTENCE'), 'persist env variable PERSISTENCE');
+        $this->assertEquals('all_good', env('PERSISTENCE'), 'persist variable (writing directly to the .env file)');
 
-        // Revert the file back to its state
+        file_put_contents($this->envFile, $content);
+    }
+
+    public function testPersistEnvVariableWithDotenvClassInstance()
+    {
+        $content = file_get_contents($this->envFile);
+
+        dotenv()->persist('PERSISTENCE', 'all_good');
+
+        loadEnv($this->envFile);
+
+        $this->assertEquals('all_good', env('PERSISTENCE'), 'Writing directly to the .env file using dotenv()->persist()');
+
         file_put_contents($this->envFile, $content);
     }
 }
