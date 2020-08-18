@@ -1,13 +1,12 @@
 <?php
 
 /**
- * (c) Nuna Akpaglo <princedorcis@gmail.com>
+ * (c) Nuna Akpaglo <princedorcis@gmail.com>.
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-
-if (!function_exists('env') || __NAMESPACE__) {
+if (! function_exists('env') || __NAMESPACE__) {
     /**
      * Retrieve an environment variable.
      *
@@ -24,9 +23,9 @@ if (!function_exists('env') || __NAMESPACE__) {
     }
 }
 
-if (!function_exists('addEnv') || __NAMESPACE__) {
+if (! function_exists('addEnv') || __NAMESPACE__) {
     /**
-     * Add a temporary environment variable to the current loaded environment variables
+     * Add a temporary environment variable to the current loaded environment variables.
      *
      * @param  string $name
      * @param  mixed  $value
@@ -38,9 +37,9 @@ if (!function_exists('addEnv') || __NAMESPACE__) {
     }
 }
 
-if (!function_exists('persistEnv') || __NAMESPACE__) {
+if (! function_exists('persistEnv') || __NAMESPACE__) {
     /**
-     * Write an environment variable to the loaded .env file
+     * Write an environment variable to the loaded .env file.
      *
      * @param  string $name
      * @param  mixed  $value
@@ -54,9 +53,9 @@ if (!function_exists('persistEnv') || __NAMESPACE__) {
     }
 }
 
-if (!function_exists('allEnv') || __NAMESPACE__) {
+if (! function_exists('allEnv') || __NAMESPACE__) {
     /**
-     * Returns all the environment variables in the .env file as an array
+     * Returns all the environment variables in the .env file as an array.
      *
      * @return array
      */
@@ -66,9 +65,9 @@ if (!function_exists('allEnv') || __NAMESPACE__) {
     }
 }
 
-if (!function_exists('dotenv') || __NAMESPACE__) {
+if (! function_exists('dotenv') || __NAMESPACE__) {
     /**
-     * Returns the Dotenv instance
+     * Returns the Dotenv instance.
      *
      * @return Dotenv
      */
@@ -78,9 +77,9 @@ if (!function_exists('dotenv') || __NAMESPACE__) {
     }
 }
 
-if (!function_exists('loadEnv') || __NAMESPACE__) {
+if (! function_exists('loadEnv') || __NAMESPACE__) {
     /**
-     * Load a specific .env file
+     * Load a specific .env file.
      *
      * @param  string $path
      * @return void

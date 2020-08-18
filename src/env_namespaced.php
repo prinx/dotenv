@@ -1,7 +1,7 @@
 <?php
 
 /**
- * (c) Nuna Akpaglo <princedorcis@gmail.com>
+ * (c) Nuna Akpaglo <princedorcis@gmail.com>.
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -48,7 +48,7 @@ function addEnv($name, $value)
 }
 
 /**
- * Write an environment variable to the loaded .env file
+ * Write an environment variable to the loaded .env file.
  *
  * @param  string $name
  * @param  mixed  $value
@@ -76,7 +76,7 @@ function allEnv()
 }
 
 /**
- * Returns the Dotenv instance
+ * Returns the Dotenv instance.
  *
  * @return Dotenv
  */
@@ -86,7 +86,7 @@ function dotenv()
 }
 
 /**
- * Load a specific .env file
+ * Load a specific .env file.
  *
  * @param  string $path
  * @return void
