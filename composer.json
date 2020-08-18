@@ -7,14 +7,14 @@
     "dotenv",
     "env"
   ],
-  "homepage": "https://github.com/Prinx/dotenv",
+  "homepage": "https://github.com/prinx/dotenv",
   "license": "MIT",
   "authors": [
     {
       "name": "Prince Damien Dorcis-Akpaglo",
       "email": "princedorcis@gmail.com",
       "role": "Maintainer",
-      "homepage": "https://github.com/Prinx"
+      "homepage": "https://github.com/prinx"
     }
   ],
   "minimum-stability": "dev",
@@ -29,7 +29,8 @@
   },
   "autoload": {
     "files": [
-      "src/env.php"
+      "src/env.php",
+      "src/env_namespaced.php"
     ],
     "psr-4": {
       "Prinx\\Dotenv\\": "src/"
