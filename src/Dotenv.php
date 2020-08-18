@@ -74,12 +74,12 @@ class Dotenv
 
         $lastIndex = count($nameExploded) - 1;
         foreach ($nameExploded as $key => $variableName) {
-            if (!$variableName) {
+            if (! $variableName) {
                 return null;
             }
 
             if (isset($lookup[$variableName])) {
-                if (!is_array($value) && $key < $lastIndex) {
+                if (! is_array($value) && $key < $lastIndex) {
                     return null;
                 }
 
@@ -140,11 +140,11 @@ class Dotenv
             $content = preg_replace($pattern, $line, $content);
         } elseif (
             ($envVariableExistsInMemory && $overwrite) ||
-            !$envVariableExistsInMemory ||
-            !$envVariableExistsInFile
+            ! $envVariableExistsInMemory ||
+            ! $envVariableExistsInFile
         ) {
             $content = trim($content)."\n\n".$line;
-        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && !$overwrite) {
+        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && ! $overwrite) {
             return;
         }
 
@@ -171,7 +171,7 @@ class Dotenv
             if (preg_match($pattern, $line, $matches)) {
                 $ref = $matches[3];
 
-                if (!$this->envVariableExistsInMemory($ref)) {
+                if (! $this->envVariableExistsInMemory($ref)) {
                     return null;
                 }
 
@@ -232,8 +232,8 @@ class Dotenv
     protected function isStringifiable($var)
     {
         return
-        !is_array($var) &&
-            ((!is_object($var) && settype($var, 'string') !== false) ||
+        ! is_array($var) &&
+            ((! is_object($var) && settype($var, 'string') !== false) ||
             (is_object($var) && method_exists($var, '__toString')));
     }
 
@@ -305,14 +305,14 @@ class Dotenv
      */
     protected function addIfNotExists($name, $value, $section = '')
     {
-        if (!isset($this->env[$name])) {
+        if (! isset($this->env[$name])) {
             $this->add($name, $value, $section);
         }
     }
 
     public function setPath($path)
     {
-        if (!\file_exists($path)) {
+        if (! \file_exists($path)) {
             throw new \Exception('Trying to set the env file path but the file '.$path.' seems not to exist.');
         }
 
