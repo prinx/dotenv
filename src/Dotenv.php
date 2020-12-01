@@ -48,7 +48,7 @@ class Dotenv
      *
      * @param  string  $name
      * @param  mixed   $default
-     * 
+     *
      * @return mixed
      */
     public function get($name = '', $default = null)
@@ -98,7 +98,7 @@ class Dotenv
      *
      * @param  string $name
      * @param  mixed  $value
-     * 
+     *
      * @return void
      */
     public function add($name, $value)
@@ -109,6 +109,7 @@ class Dotenv
 
         if (1 === $namespaceCount) {
             $this->env[$name] = $value;
+
             return;
         }
 
@@ -127,7 +128,7 @@ class Dotenv
      * @param  mixed  $value
      * @param  bool   $overwrite      If true, overwrites the variable if it was already in the file
      * @param  bool   $quoteString
-     * 
+     *
      * @return void
      */
     public function persist($name, $value, $overwrite = true, $quoteString = true)
@@ -196,7 +197,7 @@ class Dotenv
      *
      * @param  mixed  $refValue
      * @param  mixed  $lineValue
-     * 
+     *
      * @return string
      */
     protected function properValueOfRef($refValue, $lineValue)
@@ -213,7 +214,7 @@ class Dotenv
      *
      * @param  mixed  $refValue
      * @param  mixed  $lineValue
-     * 
+     *
      * @return bool
      */
     protected function valueSameAsReference($refValue, $lineValue)
@@ -232,9 +233,9 @@ class Dotenv
      * Check if var can be converted to string.
      *
      * @param  mixed  $var
-     * 
+     *
      * @return bool
-     * 
+     *
      * @see https://stackoverflow.com/a/5496674
      */
     protected function isStringifiable($var)
@@ -252,7 +253,7 @@ class Dotenv
      * @param  array   $nameIndexes
      * @param  int     $currentIndex
      * @param  int     $lastIndex
-     * 
+     *
      * @return mixed
      */
     protected function nextArrayValue(
@@ -277,7 +278,7 @@ class Dotenv
      * Determines if an environment variables exists.
      *
      * @param  string $name
-     * 
+     *
      * @return bool
      */
     protected function envVariableExistsInMemory($name)
@@ -290,9 +291,9 @@ class Dotenv
      *
      * @param  string $fileName
      * @param  string $str
-     * 
+     *
      * @return int|string
-     * 
+     *
      * @see https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
      */
     protected function getLineWithString($fileName, $str)
@@ -313,7 +314,7 @@ class Dotenv
      * @param  string $name
      * @param  mixed  $value
      * @param  string $section
-     * 
+     *
      * @return void
      */
     protected function addIfNotExists($name, $value, $section = '')
