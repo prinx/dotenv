@@ -53,9 +53,10 @@ class EnvNamespacedTest extends TestCase
     {
         $content = file_get_contents($this->envFile);
 
+        loadEnv($this->envFile);
+
         persistEnv('PERSISTENCE', 'all_good');
 
-        loadEnv($this->envFile);
         $this->assertEquals('all_good', env('PERSISTENCE'), 'persist variable (writing directly to the .env file)');
 
         file_put_contents($this->envFile, $content);

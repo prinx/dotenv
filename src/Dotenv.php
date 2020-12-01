@@ -133,8 +133,8 @@ class Dotenv
         $envVariableExistsInFile = preg_match($pattern, $content);
         $envVariableExistsInMemory = $this->envVariableExistsInMemory($name);
 
-        $value = \is_string($value) && $quoteString ? '"'.$value.'"' : $value;
-        $line = $name.'='.$value;
+        $valueToWrite = \is_string($value) && $quoteString ? '"'.$value.'"' : $value;
+        $line = $name.'='.$valueToWrite;
 
         if ($envVariableExistsInFile && $overwrite) {
             $content = preg_replace($pattern, $line, $content);
