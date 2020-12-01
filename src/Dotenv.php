@@ -10,7 +10,7 @@
 namespace Prinx\Dotenv;
 
 /**
- * Main class representing the environment variables.
+ * Class representing the environment variables.
  */
 class Dotenv
 {
@@ -27,7 +27,7 @@ class Dotenv
             $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
             $this->env = array_merge($_ENV, $this->env);
         } catch (\Throwable $th) {
-            throw new \Exception('An error happened when parsing the <strong>.env</strong> file:<br>'.$th->getMessage());
+            throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
         }
 
         $this->replaceReferences();
@@ -48,6 +48,7 @@ class Dotenv
      *
      * @param  string  $name
      * @param  mixed   $default
+     * 
      * @return mixed
      */
     public function get($name = '', $default = null)
@@ -97,6 +98,7 @@ class Dotenv
      *
      * @param  string $name
      * @param  mixed  $value
+     * 
      * @return void
      */
     public function add($name, $value)
@@ -106,7 +108,8 @@ class Dotenv
         $namespaceCount = count($nameExploded);
 
         if (1 === $namespaceCount) {
-            return $this->env[$name] = $value;
+            $this->env[$name] = $value;
+            return;
         }
 
         $this->env[$nameExploded[0]] = $this->nextArrayValue(
@@ -124,6 +127,7 @@ class Dotenv
      * @param  mixed  $value
      * @param  bool   $overwrite      If true, overwrites the variable if it was already in the file
      * @param  bool   $quoteString
+     * 
      * @return void
      */
     public function persist($name, $value, $overwrite = true, $quoteString = true)
@@ -172,7 +176,7 @@ class Dotenv
                 $ref = $matches[3];
 
                 if (! $this->envVariableExistsInMemory($ref)) {
-                    return null;
+                    return;
                 }
 
                 $refValue = $this->env[$ref];
@@ -192,7 +196,8 @@ class Dotenv
      *
      * @param  mixed  $refValue
      * @param  mixed  $lineValue
-     * @return void
+     * 
+     * @return string
      */
     protected function properValueOfRef($refValue, $lineValue)
     {
@@ -208,7 +213,8 @@ class Dotenv
      *
      * @param  mixed  $refValue
      * @param  mixed  $lineValue
-     * @return void
+     * 
+     * @return bool
      */
     protected function valueSameAsReference($refValue, $lineValue)
     {
@@ -226,9 +232,11 @@ class Dotenv
      * Check if var can be converted to string.
      *
      * @param  mixed  $var
+     * 
      * @return bool
+     * 
+     * @see https://stackoverflow.com/a/5496674
      */
-    // Thanks to https://stackoverflow.com/a/5496674
     protected function isStringifiable($var)
     {
         return
@@ -244,6 +252,7 @@ class Dotenv
      * @param  array   $nameIndexes
      * @param  int     $currentIndex
      * @param  int     $lastIndex
+     * 
      * @return mixed
      */
     protected function nextArrayValue(
@@ -268,6 +277,7 @@ class Dotenv
      * Determines if an environment variables exists.
      *
      * @param  string $name
+     * 
      * @return bool
      */
     protected function envVariableExistsInMemory($name)
@@ -278,10 +288,12 @@ class Dotenv
     /**
      * Get the line number of a string, in a file.
      *
-     * Thanks to https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
      * @param  string $fileName
      * @param  string $str
-     * @return int
+     * 
+     * @return int|string
+     * 
+     * @see https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
      */
     protected function getLineWithString($fileName, $str)
     {
@@ -301,6 +313,7 @@ class Dotenv
      * @param  string $name
      * @param  mixed  $value
      * @param  string $section
+     * 
      * @return void
      */
     protected function addIfNotExists($name, $value, $section = '')

@@ -3,10 +3,10 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Prinx\Dotenv\Dotenv;
 use function Prinx\Dotenv\addEnv;
 use function Prinx\Dotenv\allEnv;
 use function Prinx\Dotenv\dotenv;
-use Prinx\Dotenv\Dotenv;
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\loadEnv;
 use function Prinx\Dotenv\persistEnv;
@@ -23,6 +23,7 @@ class EnvNamespacedTest extends TestCase
 
     public function testLoadEnv()
     {
+        file_put_contents($this->envFile, 'EXAMPLE=true');
         loadEnv($this->envFile);
         $this->assertTrue(is_a(dotenv(), Dotenv::class), 'Test Env load');
     }
@@ -35,9 +36,11 @@ class EnvNamespacedTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        $this->assertTrue(env() == ['EXAMPLE' => true], 'Retrieving all env variables using env()');
-        $this->assertTrue(allEnv() == ['EXAMPLE' => true], 'Retrieving all env variables using allEnv()');
-        $this->assertTrue(dotenv()->all() == ['EXAMPLE' => true], 'Retrieving all env variables using dotenv()->all()');
+        $allEnv = array_merge($_ENV, ['EXAMPLE' => true]);
+
+        $this->assertEquals(env(), $allEnv, 'Retrieving all env variables using env()');
+        $this->assertEquals(allEnv(), $allEnv, 'Retrieving all env variables using allEnv()');
+        $this->assertEquals(dotenv()->all(), $allEnv, 'Retrieving all env variables using dotenv()->all()');
     }
 
     public function testAddEnvVariable()

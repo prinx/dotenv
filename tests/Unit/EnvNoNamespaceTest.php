@@ -17,6 +17,7 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testLoadEnv()
     {
+        file_put_contents($this->envFile, 'EXAMPLE=true');
         loadEnv($this->envFile);
         $this->assertTrue(is_a(dotenv(), Dotenv::class), 'Test Env load');
     }
@@ -29,9 +30,11 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        $this->assertTrue(env() == ['EXAMPLE' => true], 'Retrieving all env variables using env()');
-        $this->assertTrue(allEnv() == ['EXAMPLE' => true], 'Retrieving all env variables using allEnv()');
-        $this->assertTrue(dotenv()->all() == ['EXAMPLE' => true], 'Retrieving all env variables using dotenv()->all()');
+        $allEnv = array_merge($_ENV, ['EXAMPLE' => true]);
+
+        $this->assertEquals(env(), $allEnv, 'Retrieving all env variables using env()');
+        $this->assertEquals(allEnv(), $allEnv, 'Retrieving all env variables using allEnv()');
+        $this->assertEquals(dotenv()->all(), $allEnv, 'Retrieving all env variables using dotenv()->all()');
     }
 
     public function testAddEnvVariable()
@@ -47,9 +50,10 @@ class EnvNoNamespaceTest extends TestCase
     {
         $content = file_get_contents($this->envFile);
 
+        loadEnv($this->envFile);
+
         persistEnv('PERSISTENCE', 'all_good');
 
-        loadEnv($this->envFile);
         $this->assertEquals('all_good', env('PERSISTENCE'), 'persist variable (writing directly to the .env file)');
 
         file_put_contents($this->envFile, $content);
