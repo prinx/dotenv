@@ -35,8 +35,6 @@ class Dotenv
 
     /**
      * Returns all the environment variables.
-     *
-     * @return array
      */
     public function all(): array
     {
@@ -201,8 +199,6 @@ class Dotenv
      *
      * @param mixed $refValue
      * @param mixed $lineValue
-     *
-     * @return string
      */
     protected function properValueOfRef($refValue, $lineValue): string
     {
@@ -218,8 +214,6 @@ class Dotenv
      *
      * @param mixed $refValue
      * @param mixed $lineValue
-     *
-     * @return bool
      */
     protected function valueSameAsReference($refValue, $lineValue): bool
     {
@@ -237,8 +231,6 @@ class Dotenv
      * Check if var can be converted to string.
      *
      * @param mixed $var
-     *
-     * @return bool
      *
      * @see https://stackoverflow.com/a/5496674
      */
@@ -277,8 +269,6 @@ class Dotenv
 
     /**
      * Determines if an environment variables exists.
-     *
-     * @return bool
      */
     protected function envVariableExistsInMemory(string $name): bool
     {
