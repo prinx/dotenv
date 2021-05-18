@@ -24,7 +24,7 @@ class Dotenv
         $this->setPath($path);
 
         try {
-            $this->env = \parse_ini_file($this->path, true, INI_SCANNER_TYPED);
+            $this->env = \file_exists($this->path) ? \parse_ini_file($this->path, true, INI_SCANNER_TYPED) : [];
             $this->env = array_merge($_ENV, $this->env);
         } catch (\Throwable $th) {
             throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
@@ -320,10 +320,6 @@ class Dotenv
 
     public function setPath(string $path)
     {
-        if (!\file_exists($path)) {
-            throw new \Exception('Trying to set the env file path but the file '.$path.' seems not to exist.');
-        }
-
         $this->path = $path;
 
         return $this;
