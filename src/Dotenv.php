@@ -24,8 +24,8 @@ class Dotenv
         $this->setPath($path);
 
         try {
-            $this->env = \file_exists($this->path) ? \parse_ini_file($this->path, true, INI_SCANNER_TYPED) : [];
-            $this->env = array_merge($_ENV, $this->env);
+            $env = \file_exists($this->path) ? \parse_ini_file($this->path, true, INI_SCANNER_TYPED) : [];
+            $this->env = array_merge($_ENV, $env);
         } catch (\Throwable $th) {
             throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
         }
@@ -169,6 +169,10 @@ class Dotenv
      */
     protected function replaceReferences()
     {
+        if (!\file_exists($this->path)) {
+            return $this;
+        }
+
         $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
         $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*(.*\$\{([a-zA-Z0-9_]+)\}.*)/';
 
