@@ -177,7 +177,7 @@ class Dotenv
                 $ref = $matches[3];
 
                 if (!$this->envVariableExistsInMemory($ref)) {
-                    return $this;
+                    continue;
                 }
 
                 $refValue = $this->env[$ref];
