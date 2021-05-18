@@ -46,9 +46,9 @@ class Dotenv
     /**
      * Get a specific environment variable.
      *
-     * @param  string  $name
-     * @param  mixed   $default
-     * 
+     * @param string $name
+     * @param mixed  $default
+     *
      * @return mixed
      */
     public function get($name = '', $default = null)
@@ -75,12 +75,12 @@ class Dotenv
 
         $lastIndex = count($nameExploded) - 1;
         foreach ($nameExploded as $key => $variableName) {
-            if (! $variableName) {
+            if (!$variableName) {
                 return null;
             }
 
             if (isset($lookup[$variableName])) {
-                if (! is_array($value) && $key < $lastIndex) {
+                if (!is_array($value) && $key < $lastIndex) {
                     return null;
                 }
 
@@ -96,9 +96,9 @@ class Dotenv
     /**
      * Add an environment variables to the currently loaded environment variables.
      *
-     * @param  string $name
-     * @param  mixed  $value
-     * 
+     * @param string $name
+     * @param mixed  $value
+     *
      * @return void
      */
     public function add($name, $value)
@@ -109,7 +109,8 @@ class Dotenv
 
         if (1 === $namespaceCount) {
             $this->env[$name] = $value;
-            return;
+
+            return $this;
         }
 
         $this->env[$nameExploded[0]] = $this->nextArrayValue(
@@ -118,16 +119,18 @@ class Dotenv
             1,
             $namespaceCount - 1
         );
+
+        return $this;
     }
 
     /**
      * Write a new environment variable to the .env file.
      *
-     * @param  string $name
-     * @param  mixed  $value
-     * @param  bool   $overwrite      If true, overwrites the variable if it was already in the file
-     * @param  bool   $quoteString
-     * 
+     * @param string $name
+     * @param mixed  $value
+     * @param bool   $overwrite   If true, overwrites the variable if it was already in the file
+     * @param bool   $quoteString
+     *
      * @return void
      */
     public function persist($name, $value, $overwrite = true, $quoteString = true)
@@ -144,16 +147,18 @@ class Dotenv
             $content = preg_replace($pattern, $line, $content);
         } elseif (
             ($envVariableExistsInMemory && $overwrite) ||
-            ! $envVariableExistsInMemory ||
-            ! $envVariableExistsInFile
+            !$envVariableExistsInMemory ||
+            !$envVariableExistsInFile
         ) {
             $content = trim($content)."\n\n".$line;
-        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && ! $overwrite) {
-            return;
+        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && !$overwrite) {
+            return $this;
         }
 
         file_put_contents($this->path, $content);
         $this->add($name, $value);
+
+        return $this;
     }
 
     public static function load($path)
@@ -175,7 +180,7 @@ class Dotenv
             if (preg_match($pattern, $line, $matches)) {
                 $ref = $matches[3];
 
-                if (! $this->envVariableExistsInMemory($ref)) {
+                if (!$this->envVariableExistsInMemory($ref)) {
                     return;
                 }
 
@@ -194,9 +199,9 @@ class Dotenv
     /**
      * Assign the proper type of the reference to the replaced value.
      *
-     * @param  mixed  $refValue
-     * @param  mixed  $lineValue
-     * 
+     * @param mixed $refValue
+     * @param mixed $lineValue
+     *
      * @return string
      */
     protected function properValueOfRef($refValue, $lineValue)
@@ -211,9 +216,9 @@ class Dotenv
     /**
      * Check the value is the same as it reference (It is not inside a sentence for exemple).
      *
-     * @param  mixed  $refValue
-     * @param  mixed  $lineValue
-     * 
+     * @param mixed $refValue
+     * @param mixed $lineValue
+     *
      * @return bool
      */
     protected function valueSameAsReference($refValue, $lineValue)
@@ -231,28 +236,28 @@ class Dotenv
     /**
      * Check if var can be converted to string.
      *
-     * @param  mixed  $var
-     * 
+     * @param mixed $var
+     *
      * @return bool
-     * 
+     *
      * @see https://stackoverflow.com/a/5496674
      */
     protected function isStringifiable($var)
     {
         return
-        ! is_array($var) &&
-            ((! is_object($var) && settype($var, 'string') !== false) ||
+        !is_array($var) &&
+            ((!is_object($var) && settype($var, 'string') !== false) ||
             (is_object($var) && method_exists($var, '__toString')));
     }
 
     /**
      * Returns the array corresponding to the currentIndex in nameIndexes or returns the valueToInsert.
      *
-     * @param  mixed   $valueToInsert
-     * @param  array   $nameIndexes
-     * @param  int     $currentIndex
-     * @param  int     $lastIndex
-     * 
+     * @param mixed $valueToInsert
+     * @param array $nameIndexes
+     * @param int   $currentIndex
+     * @param int   $lastIndex
+     *
      * @return mixed
      */
     protected function nextArrayValue(
@@ -276,8 +281,8 @@ class Dotenv
     /**
      * Determines if an environment variables exists.
      *
-     * @param  string $name
-     * 
+     * @param string $name
+     *
      * @return bool
      */
     protected function envVariableExistsInMemory($name)
@@ -288,11 +293,11 @@ class Dotenv
     /**
      * Get the line number of a string, in a file.
      *
-     * @param  string $fileName
-     * @param  string $str
-     * 
+     * @param string $fileName
+     * @param string $str
+     *
      * @return int|string
-     * 
+     *
      * @see https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
      */
     protected function getLineWithString($fileName, $str)
@@ -310,26 +315,30 @@ class Dotenv
     /**
      * Add a value to the current loaded environment variables if the value is not already there.
      *
-     * @param  string $name
-     * @param  mixed  $value
-     * @param  string $section
-     * 
+     * @param string $name
+     * @param mixed  $value
+     * @param string $section
+     *
      * @return void
      */
     protected function addIfNotExists($name, $value, $section = '')
     {
-        if (! isset($this->env[$name])) {
+        if (!isset($this->env[$name])) {
             $this->add($name, $value, $section);
         }
+
+        return $this;
     }
 
     public function setPath($path)
     {
-        if (! \file_exists($path)) {
+        if (!\file_exists($path)) {
             throw new \Exception('Trying to set the env file path but the file '.$path.' seems not to exist.');
         }
 
         $this->path = $path;
+
+        return $this;
     }
 
     public function getPath()
