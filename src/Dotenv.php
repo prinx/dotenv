@@ -38,7 +38,7 @@ class Dotenv
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->env;
     }
@@ -46,12 +46,11 @@ class Dotenv
     /**
      * Get a specific environment variable.
      *
-     * @param string $name
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function get($name = '', $default = null)
+    public function get(string $name = '', $default = null)
     {
         if (\func_num_args() === 0) {
             return $this->all();
@@ -96,12 +95,11 @@ class Dotenv
     /**
      * Add an environment variables to the currently loaded environment variables.
      *
-     * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      *
-     * @return void
+     * @return $this
      */
-    public function add($name, $value)
+    public function add(string $name, $value)
     {
         $nameExploded = explode($this->sectionSeparator, $name);
 
@@ -126,14 +124,12 @@ class Dotenv
     /**
      * Write a new environment variable to the .env file.
      *
-     * @param string $name
-     * @param mixed  $value
-     * @param bool   $overwrite   If true, overwrites the variable if it was already in the file
-     * @param bool   $quoteString
+     * @param mixed $value
+     * @param bool  $overwrite If true, overwrites the variable if it was already in the file
      *
-     * @return void
+     * @return $this
      */
-    public function persist($name, $value, $overwrite = true, $quoteString = true)
+    public function persist(string $name, $value, bool $overwrite = true, bool $quoteString = true)
     {
         $pattern = '/'.$name.'[ ]*=.*/';
         $content = \file_get_contents($this->path);
@@ -169,7 +165,7 @@ class Dotenv
     /**
      * Replace the references in the .env by their respective value.
      *
-     * @return void
+     * @return $this
      */
     protected function replaceReferences()
     {
@@ -181,7 +177,7 @@ class Dotenv
                 $ref = $matches[3];
 
                 if (!$this->envVariableExistsInMemory($ref)) {
-                    return;
+                    return $this;
                 }
 
                 $refValue = $this->env[$ref];
@@ -194,6 +190,8 @@ class Dotenv
                 $this->env[$matches[1]] = $lineValueFormatted;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -204,7 +202,7 @@ class Dotenv
      *
      * @return string
      */
-    protected function properValueOfRef($refValue, $lineValue)
+    protected function properValueOfRef($refValue, $lineValue): string
     {
         if ($this->valueSameAsReference($refValue, $lineValue)) {
             settype($lineValue, gettype($refValue));
@@ -221,7 +219,7 @@ class Dotenv
      *
      * @return bool
      */
-    protected function valueSameAsReference($refValue, $lineValue)
+    protected function valueSameAsReference($refValue, $lineValue): bool
     {
         $refValueString = '';
         $refValueType = gettype($refValue);
@@ -242,7 +240,7 @@ class Dotenv
      *
      * @see https://stackoverflow.com/a/5496674
      */
-    protected function isStringifiable($var)
+    protected function isStringifiable($var): bool
     {
         return
         !is_array($var) &&
@@ -254,17 +252,14 @@ class Dotenv
      * Returns the array corresponding to the currentIndex in nameIndexes or returns the valueToInsert.
      *
      * @param mixed $valueToInsert
-     * @param array $nameIndexes
-     * @param int   $currentIndex
-     * @param int   $lastIndex
      *
      * @return mixed
      */
     protected function nextArrayValue(
         $valueToInsert,
-        $nameIndexes,
-        $currentIndex,
-        $lastIndex
+        array $nameIndexes,
+        int $currentIndex,
+        int $lastIndex
     ) {
         return $currentIndex === $lastIndex ?
         $valueToInsert :
@@ -281,11 +276,9 @@ class Dotenv
     /**
      * Determines if an environment variables exists.
      *
-     * @param string $name
-     *
      * @return bool
      */
-    protected function envVariableExistsInMemory($name)
+    protected function envVariableExistsInMemory(string $name): bool
     {
         return isset($this->env[$name]) || (bool) getenv($name);
     }
@@ -293,14 +286,11 @@ class Dotenv
     /**
      * Get the line number of a string, in a file.
      *
-     * @param string $fileName
-     * @param string $str
-     *
      * @return int|string
      *
      * @see https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
      */
-    protected function getLineWithString($fileName, $str)
+    protected function getLineWithString(string $fileName, string $str)
     {
         $lines = file($fileName);
         foreach ($lines as $line) {
@@ -315,13 +305,11 @@ class Dotenv
     /**
      * Add a value to the current loaded environment variables if the value is not already there.
      *
-     * @param string $name
-     * @param mixed  $value
-     * @param string $section
+     * @param mixed $value
      *
-     * @return void
+     * @return $this
      */
-    protected function addIfNotExists($name, $value, $section = '')
+    protected function addIfNotExists(string $name, $value, string $section = '')
     {
         if (!isset($this->env[$name])) {
             $this->add($name, $value, $section);
@@ -330,7 +318,7 @@ class Dotenv
         return $this;
     }
 
-    public function setPath($path)
+    public function setPath(string $path)
     {
         if (!\file_exists($path)) {
             throw new \Exception('Trying to set the env file path but the file '.$path.' seems not to exist.');
