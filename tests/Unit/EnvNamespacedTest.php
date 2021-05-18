@@ -36,7 +36,7 @@ class EnvNamespacedTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        $allEnv = array_merge($_ENV, ['EXAMPLE' => true]);
+        $allEnv = array_merge($_ENV, getenv(), ['EXAMPLE' => true]);
 
         $this->assertEquals(env(), $allEnv, 'Retrieving all env variables using env()');
         $this->assertEquals(allEnv(), $allEnv, 'Retrieving all env variables using allEnv()');
