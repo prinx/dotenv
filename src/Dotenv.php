@@ -25,7 +25,7 @@ class Dotenv
 
         try {
             $env = \file_exists($this->path) ? \parse_ini_file($this->path, true, INI_SCANNER_TYPED) : [];
-            $this->env = array_merge($_ENV, $env);
+            $this->env = array_merge($_ENV, getenv(), $env);
         } catch (\Throwable $th) {
             throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
         }
@@ -64,8 +64,6 @@ class Dotenv
             }
 
             return $this->env[$name];
-        } elseif ($value = getenv($name)) {
-            return $value;
         }
 
         $nameExploded = explode($this->sectionSeparator, $name);
@@ -84,8 +82,8 @@ class Dotenv
                 }
 
                 $lookup = $value;
-            } else {
-                return $defaultWasPassed ? $default : getenv($variableName);
+            } elseif ($defaultWasPassed) {
+                return $default;
             }
         }
 
@@ -284,7 +282,7 @@ class Dotenv
      */
     protected function envVariableExistsInMemory(string $name): bool
     {
-        return isset($this->env[$name]) || (bool) getenv($name);
+        return isset($this->env[$name]);
     }
 
     /**
