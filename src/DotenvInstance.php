@@ -18,13 +18,13 @@ class DotenvInstance
     /**
      * Returns the Dotenv instance.
      *
-     * It instanciate the Dotenv class if not yet instanciated.
+     * It instanciates the Dotenv class if not yet instanciated.
      *
      * @return Dotenv
      */
     public static function get()
     {
-        if (! self::$envInstance) {
+        if (!self::$envInstance) {
             self::load();
         }
 
@@ -34,7 +34,8 @@ class DotenvInstance
     /**
      * Initialise the Dotenv instance.
      *
-     * @param  string $path Path to the .env file
+     * @param string $path Path to the .env file
+     *
      * @return void
      */
     public static function load($path = null)
