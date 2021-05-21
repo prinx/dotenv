@@ -170,4 +170,11 @@ class EnvNamespacedTest extends TestCase
         $this->assertIsString(env('STRING_INTEGER'));
         $this->assertEquals('123', env('STRING_INTEGER'));
     }
+
+    public function testGetDefault()
+    {
+        $this->assertEquals('abcd', env('DDDDDDDDD', 'abcd'));
+        $this->assertEquals(123, env('DDDDDDDDD', 123));
+        $this->assertEquals(true, env('DDDDDDDDD', true));
+    }
 }

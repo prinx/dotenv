@@ -134,4 +134,11 @@ class EnvNoNamespaceTest extends TestCase
 
         $this->assertEquals('all_good', env('PERSISTENCE'), 'Writing directly to the .env file using dotenv()->persist()');
     }
+
+    public function testGetDefault()
+    {
+        $this->assertEquals('abcd', env('DDDDDDDDD', 'abcd'));
+        $this->assertEquals(123, env('DDDDDDDDD', 123));
+        $this->assertEquals(true, env('DDDDDDDDD', true));
+    }
 }
