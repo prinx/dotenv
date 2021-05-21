@@ -23,13 +23,27 @@ class Dotenv
         $this->setPath($path);
 
         try {
-            $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_TYPED) : [];
+            $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_RAW) : [];
             $this->env = array_merge($_ENV, getenv(), $env);
         } catch (\Throwable $th) {
             throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
         }
 
+        $this->convertSpecials();
         $this->replaceReferences();
+    }
+
+    public function convertSpecials()
+    {
+        foreach ($this->env as $variable => $value) {
+            $special = strtolower($value);
+
+            if ($special === 'true' || $special === 'false') {
+                $this->env[$variable] = $special === 'true';
+            } elseif (is_numeric($value) && strval(intval($value)) === $value) {
+                $this->env[$variable] = intval($value);
+            }
+        }
     }
 
     /**
@@ -85,7 +99,12 @@ class Dotenv
         $envVariableExistsInFile = preg_match($pattern, $content);
         $envVariableExistsInMemory = $this->envVariableExistsInMemory($name);
 
-        $valueToWrite = \is_string($value) && $quoteString ? '"'.$value.'"' : $value;
+        if (in_array($value, [true, false], true)) {
+            $valueToWrite = $value ? 'true' : 'false';
+        } else {
+            $valueToWrite = is_string($value) && $quoteString ? '"'.$value.'"' : $value;
+        }
+
         $line = $name.'='.$valueToWrite;
 
         if ($envVariableExistsInFile && $overwrite) {
@@ -101,6 +120,17 @@ class Dotenv
         }
 
         file_put_contents($this->path, $content);
+
+        switch ($value) {
+            case 'true':
+                $value = true;
+                break;
+
+            case 'false':
+                $value = false;
+                break;
+        }
+
         $this->add($name, $value);
 
         return $this;

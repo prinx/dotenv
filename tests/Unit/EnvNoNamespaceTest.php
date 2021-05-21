@@ -9,32 +9,99 @@ class EnvNoNamespaceTest extends TestCase
 {
     protected $envFile = '';
 
-    public function __construct()
+    public function setUp(): void
     {
-        parent::__construct();
         $this->envFile = realpath(__DIR__.'/../../.env.example');
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
     }
 
-    public function testLoadEnv()
+    public function tearDown(): void
     {
-        file_put_contents($this->envFile, 'EXAMPLE=true');
-        loadEnv($this->envFile);
-        $this->assertTrue(is_a(dotenv(), Dotenv::class), 'Test Env load');
+        file_put_contents($this->envFile, '');
+    }
+
+    public function testloadenv()
+    {
+        $this->assertInstanceOf(Dotenv::class, dotenv(), 'Test Env load');
     }
 
     public function testRetrieveEnvVariable()
     {
-        $this->assertEquals(true, env('EXAMPLE'), 'Retrieve env variable EXAMPLE with env()');
-        $this->assertEquals(true, dotenv()->get('EXAMPLE'), 'Retrieve env variable EXAMPLE with dotenv()->get()');
+        $this->assertEquals('aaa', env('EXAMPLE'), 'Retrieve env variable EXAMPLE with env()');
+        $this->assertEquals('aaa', dotenv()->get('EXAMPLE'), 'Retrieve env variable EXAMPLE with dotenv()->get()');
+    }
+
+    public function testMustReturnBooleanTrueIfBooleanTrueIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=true');
+        loadenv($this->envFile);
+
+        $this->assertEquals(true, env('EXAMPLE'), 'Boolean true must be got as boolean true with env()');
+        $this->assertEquals(true, dotenv()->get('EXAMPLE'), 'Boolean true must be got as boolean true with dotenv()->get()');
+    }
+
+    public function testMustReturnBooleanTrueIfStringTrueIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="true"');
+        loadenv($this->envFile);
+
+        $this->assertEquals(true, env('EXAMPLE'), 'String "true" must be got as boolean true with env()');
+        $this->assertEquals(true, dotenv()->get('EXAMPLE'), 'String "true" must be got as boolean true with dotenv()->get()');
+    }
+
+    public function testMustReturnBooleanFalseIfBooleanFalseIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=false');
+        loadenv($this->envFile);
+
+        $this->assertEquals(false, env('EXAMPLE'), 'Boolean false must be got as boolean false with env()');
+        $this->assertEquals(false, dotenv()->get('EXAMPLE'), 'Boolean false must be got as boolean false with dotenv()->get()');
+    }
+
+    public function testMustReturnBooleanFalseIfStringFalseIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="false"');
+        loadenv($this->envFile);
+
+        $this->assertEquals(false, env('EXAMPLE'), 'String "false" must be got as boolean false with env()');
+        $this->assertEquals(false, dotenv()->get('EXAMPLE'), 'String "false" must be got as boolean false with dotenv()->get()');
+    }
+
+    public function testMustReturnIntegerIfIntegerIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=123');
+        loadenv($this->envFile);
+
+        $this->assertEquals(123, env('EXAMPLE'));
+        $this->assertEquals(123, dotenv()->get('EXAMPLE'));
+    }
+
+    public function testMustReturnStringIfFloatIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=12.3');
+        loadenv($this->envFile);
+
+        $this->assertEquals('12.3', env('EXAMPLE'));
+        $this->assertEquals('12.3', dotenv()->get('EXAMPLE'));
+    }
+
+    public function testMustReturnStringIfStringIntegerIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="123"');
+        loadenv($this->envFile);
+
+        $this->assertEquals('123', env('EXAMPLE'));
+        $this->assertEquals('123', dotenv()->get('EXAMPLE'));
     }
 
     public function testRetrieveAllEnvVariables()
     {
-        $allEnv = array_merge($_ENV, getenv(), ['EXAMPLE' => true]);
+        $allEnv = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
 
-        $this->assertEquals(env(), $allEnv, 'Retrieving all env variables using env()');
-        $this->assertEquals(allEnv(), $allEnv, 'Retrieving all env variables using allEnv()');
-        $this->assertEquals(dotenv()->all(), $allEnv, 'Retrieving all env variables using dotenv()->all()');
+        $this->assertEquals($allEnv, env(), 'Retrieving all env variables using env()');
+        $this->assertEquals($allEnv, allEnv(), 'Retrieving all env variables using allEnv()');
+        $this->assertEquals($allEnv, dotenv()->all(), 'Retrieving all env variables using dotenv()->all()');
     }
 
     public function testAddEnvVariable()
@@ -50,7 +117,7 @@ class EnvNoNamespaceTest extends TestCase
     {
         $content = file_get_contents($this->envFile);
 
-        loadEnv($this->envFile);
+        loadenv($this->envFile);
 
         persistEnv('PERSISTENCE', 'all_good');
 
@@ -61,14 +128,10 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testPersistEnvVariableWithDotenvClassInstance()
     {
-        $content = file_get_contents($this->envFile);
-
         dotenv()->persist('PERSISTENCE', 'all_good');
 
-        loadEnv($this->envFile);
+        loadenv($this->envFile);
 
         $this->assertEquals('all_good', env('PERSISTENCE'), 'Writing directly to the .env file using dotenv()->persist()');
-
-        file_put_contents($this->envFile, $content);
     }
 }
