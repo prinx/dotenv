@@ -22,12 +22,8 @@ class Dotenv
         $path = $path ?: realpath(__DIR__.'/../../../../.env');
         $this->setPath($path);
 
-        try {
-            $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_RAW) : [];
-            $this->env = array_merge($_ENV, getenv(), $env);
-        } catch (\Throwable $th) {
-            throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
-        }
+        $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_RAW) : [];
+        $this->env = array_merge($_ENV, getenv(), $env);
 
         $this->convertSpecials();
         $this->replaceReferences();

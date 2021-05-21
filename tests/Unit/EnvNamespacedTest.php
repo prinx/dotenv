@@ -108,6 +108,7 @@ class EnvNamespacedTest extends TestCase
         $this->assertEquals($allEnv, env(), 'Retrieving all env variables using env()');
         $this->assertEquals($allEnv, allEnv(), 'Retrieving all env variables using allEnv()');
         $this->assertEquals($allEnv, dotenv()->all(), 'Retrieving all env variables using dotenv()->all()');
+        $this->assertEquals($allEnv, dotenv()->get(), 'Retrieving all env variables using dotenv()->all()');
     }
 
     public function testAddEnvVariable()
