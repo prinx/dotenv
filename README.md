@@ -174,49 +174,6 @@ array(2) {
 The first engine is mariadb
 ```
 
-### Section support
-
-The dotenv package support sections in the .env file.
-You define a section by begining a line by the name of the section enclosed in square brackets. When a section is defined, anything below will be consider to be in that particular section until a new section is defined.
-
-```ini
-; HOST, USER  and DRIVER are in the DB section
-[DB]
-HOST=localhost
-USER=db_user10
-DRIVER=mysql
-
-; DRIVER here is in the SESSION section
-[SESSION]
-DRIVER=file
-```
-
-In your php code:
-
-```php
-// Will return all the values contained in the section as an array
-$db_params = env('DB');
-var_dump($db_params)
-echo "The database user's name is " . $db_params['USER'];
-```
-
-```
-array(3) {
-    ["HOST"]=> string(9) "localhost"
-    ["USER"]=> string(9) "db_user10"
-    ["DRIVER"]=> string(5) "mysql"
-}
-
-The database user's name is db_user10
-```
-
-To retrieve a specific value directly, you can use a dot to separate the section's name from the variable's name when retrieving the value.
-
-```php
-$db_driver = env('DB.DRIVER');
-$session_driver = env('SESSION.DRIVER');
-```
-
 ### Referring to another variable
 
 You can refer to the value of another variable in your .env file by putting the name of the variable you are referring to variable inside ${}:

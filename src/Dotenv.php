@@ -16,7 +16,6 @@ class Dotenv
 {
     protected $env = [];
     protected $path = '';
-    protected $sectionSeparator = '.';
 
     public function __construct($path = '')
     {
@@ -24,7 +23,7 @@ class Dotenv
         $this->setPath($path);
 
         try {
-            $env = \file_exists($this->path) ? \parse_ini_file($this->path, true, INI_SCANNER_TYPED) : [];
+            $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_TYPED) : [];
             $this->env = array_merge($_ENV, getenv(), $env);
         } catch (\Throwable $th) {
             throw new \Exception('An error happened when parsing the .env file: '.$th->getMessage());
@@ -54,65 +53,19 @@ class Dotenv
             return $this->all();
         }
 
-        $defaultWasPassed = \func_num_args() === 2;
-
-        if (isset($this->env[$name])) {
-            if ('' === $this->env[$name]) {
-                return $defaultWasPassed ? $default : '';
-            }
-
-            return $this->env[$name];
-        }
-
-        $nameExploded = explode($this->sectionSeparator, $name);
-        $lookup = $this->env;
-        $value = null;
-
-        $lastIndex = count($nameExploded) - 1;
-        foreach ($nameExploded as $key => $variableName) {
-            if (! $variableName) {
-                return null;
-            }
-
-            if (isset($lookup[$variableName])) {
-                if (! is_array($value) && $key < $lastIndex) {
-                    return null;
-                }
-
-                $lookup = $value;
-            } elseif ($defaultWasPassed) {
-                return $default;
-            }
-        }
-
-        return $value;
+        return $this->env[$name] ?? $default;
     }
 
     /**
      * Add an environment variables to the currently loaded environment variables.
      *
-     * @param mixed $value
+     * @param string|int|bool $value
      *
      * @return $this
      */
     public function add(string $name, $value)
     {
-        $nameExploded = explode($this->sectionSeparator, $name);
-
-        $namespaceCount = count($nameExploded);
-
-        if (1 === $namespaceCount) {
-            $this->env[$name] = $value;
-
-            return $this;
-        }
-
-        $this->env[$nameExploded[0]] = $this->nextArrayValue(
-            $value,
-            $nameExploded,
-            1,
-            $namespaceCount - 1
-        );
+        $this->env[$name] = $value;
 
         return $this;
     }
@@ -139,11 +92,11 @@ class Dotenv
             $content = preg_replace($pattern, $line, $content);
         } elseif (
             ($envVariableExistsInMemory && $overwrite) ||
-            ! $envVariableExistsInMemory ||
-            ! $envVariableExistsInFile
+            !$envVariableExistsInMemory ||
+            !$envVariableExistsInFile
         ) {
             $content = trim($content)."\n\n".$line;
-        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && ! $overwrite) {
+        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && !$overwrite) {
             return $this;
         }
 
@@ -165,7 +118,7 @@ class Dotenv
      */
     protected function replaceReferences()
     {
-        if (! \file_exists($this->path)) {
+        if (!\file_exists($this->path)) {
             return $this;
         }
 
@@ -176,7 +129,7 @@ class Dotenv
             if (preg_match($pattern, $line, $matches)) {
                 $ref = $matches[3];
 
-                if (! $this->envVariableExistsInMemory($ref)) {
+                if (!$this->envVariableExistsInMemory($ref)) {
                     continue;
                 }
 
@@ -237,34 +190,9 @@ class Dotenv
     protected function isStringifiable($var): bool
     {
         return
-        ! is_array($var) &&
-            ((! is_object($var) && settype($var, 'string') !== false) ||
+        !is_array($var) &&
+            ((!is_object($var) && settype($var, 'string') !== false) ||
             (is_object($var) && method_exists($var, '__toString')));
-    }
-
-    /**
-     * Returns the array corresponding to the currentIndex in nameIndexes or returns the valueToInsert.
-     *
-     * @param mixed $valueToInsert
-     *
-     * @return mixed
-     */
-    protected function nextArrayValue(
-        $valueToInsert,
-        array $nameIndexes,
-        int $currentIndex,
-        int $lastIndex
-    ) {
-        return $currentIndex === $lastIndex ?
-        $valueToInsert :
-        [
-            $nameIndexes[$currentIndex] => $this->nextArrayValue(
-                $valueToInsert,
-                $nameIndexes,
-                $currentIndex + 1,
-                $lastIndex
-            ),
-        ];
     }
 
     /**
@@ -273,41 +201,6 @@ class Dotenv
     protected function envVariableExistsInMemory(string $name): bool
     {
         return isset($this->env[$name]);
-    }
-
-    /**
-     * Get the line number of a string, in a file.
-     *
-     * @return int|string
-     *
-     * @see https://stackoverflow.com/questions/9721952/search-string-and-return-line-php
-     */
-    protected function getLineWithString(string $fileName, string $str)
-    {
-        $lines = file($fileName);
-        foreach ($lines as $line) {
-            if (strpos($line, $str) !== false) {
-                return $line;
-            }
-        }
-
-        return -1;
-    }
-
-    /**
-     * Add a value to the current loaded environment variables if the value is not already there.
-     *
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    protected function addIfNotExists(string $name, $value, string $section = '')
-    {
-        if (! isset($this->env[$name])) {
-            $this->add($name, $value, $section);
-        }
-
-        return $this;
     }
 
     public function setPath(string $path)
