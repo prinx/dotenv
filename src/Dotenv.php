@@ -99,35 +99,28 @@ class Dotenv
      * Write a new environment variable to the .env file.
      *
      * @param mixed $value
-     * @param bool  $overwrite If true, overwrites the variable if it was already in the file
      *
      * @return $this
      */
-    public function persist(string $name, $value, bool $overwrite = true, bool $quoteString = true)
+    public function persist(string $name, $value)
     {
         $pattern = '/'.$name.'[ ]*=.*/';
         $content = \file_get_contents($this->path);
         $envVariableExistsInFile = preg_match($pattern, $content);
-        $envVariableExistsInMemory = $this->envVariableExistsInMemory($name);
 
         if (in_array($value, [true, false], true)) {
             $valueToWrite = $value ? 'true' : 'false';
         } else {
-            $valueToWrite = is_string($value) && $quoteString ? '"'.$value.'"' : $value;
+            $valueToWrite = $value;
         }
 
         $line = $name.'='.$valueToWrite;
 
-        if ($envVariableExistsInFile && $overwrite) {
+        // If variable in env file, just replace the value in the env, if not add a new line to env.
+        if ($envVariableExistsInFile) {
             $content = preg_replace($pattern, $line, $content);
-        } elseif (
-            ($envVariableExistsInMemory && $overwrite) ||
-            !$envVariableExistsInMemory ||
-            !$envVariableExistsInFile
-        ) {
-            $content = trim($content)."\n\n".$line;
-        } elseif (($envVariableExistsInMemory || $envVariableExistsInFile) && !$overwrite) {
-            return $this;
+        } else {
+            $content = trim($content).PHP_EOL.PHP_EOL.$line;
         }
 
         file_put_contents($this->path, $content);

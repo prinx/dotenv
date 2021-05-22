@@ -53,14 +53,13 @@ function addEnv($name, $value)
  * @param  string $name
  * @param  mixed  $value
  * @param  bool   $overwrite
- * @param  bool   $quoteString
  * @return void
  */
-function persistEnv($name, $value, $overwrite = true, $quoteString = true)
+function persistEnv($name, $value)
 {
     $env = DotenvInstance::get();
 
-    \call_user_func([$env, 'persist'], $name, $value, $overwrite, $quoteString);
+    \call_user_func([$env, 'persist'], $name, $value);
 }
 
 /**

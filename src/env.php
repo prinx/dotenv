@@ -43,11 +43,9 @@ if (! function_exists('persistEnv') || __NAMESPACE__) {
      *
      * @param  string $name
      * @param  mixed  $value
-     * @param  bool   $overwrite
-     * @param  bool   $quote_string
      * @return void
      */
-    function persistEnv($name, $value, $overwrite = true, $quote_string = true)
+    function persistEnv($name, $value)
     {
         return Prinx\Dotenv\persistEnv(...(func_get_args()));
     }
