@@ -108,8 +108,9 @@ class Dotenv
         $content = \file_get_contents($this->path);
         $envVariableExistsInFile = preg_match($pattern, $content);
 
-        if (in_array($value, [true, false], true)) {
-            $valueToWrite = $value ? 'true' : 'false';
+        if ($this->isSpecial($value)) {
+            $valueToWrite = $this->specialValue()->reverse($value);
+            $value = $this->specialValue()->convert($value);
         } else {
             $valueToWrite = $value;
         }
@@ -124,16 +125,6 @@ class Dotenv
         }
 
         file_put_contents($this->path, $content);
-
-        switch ($value) {
-            case 'true':
-                $value = true;
-                break;
-
-            case 'false':
-                $value = false;
-                break;
-        }
 
         $this->add($name, $value);
 
