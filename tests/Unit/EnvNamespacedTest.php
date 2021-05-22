@@ -296,25 +296,25 @@ class EnvNamespacedTest extends TestCase
 
     public function testMustReturnProperTextReference()
     {
-        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2="OhNiceOne${EXAMPLE}Exactly"');
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2="OhNiceOne${EXAMPLE}Indeed"');
         loadenv($this->envFile);
-        $this->assertSame('OhNiceOneaaaExactly', env('EXAMPLE2'));
+        $this->assertSame('OhNiceOneaaaIndeed', env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE=aaa'.PHP_EOL.'EXAMPLE2="Oh Nice One ${EXAMPLE}Exactly "');
+        file_put_contents($this->envFile, 'EXAMPLE=aaa'.PHP_EOL.'EXAMPLE2="Oh Nice One ${EXAMPLE}Indeed "');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One aaaExactly ', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One aaaIndeed ', env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE}Exactly ');
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE}Indeed ');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One aaaExactly', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One aaaIndeed', env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Exactly ');
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Indeed ');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One aaa Exactly', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One aaa Indeed', env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Exactly ');
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Indeed ');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One aaa Exactly', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One aaa Indeed', env('EXAMPLE2'));
     }
 
     public function testMustReturnProperNullReference()
@@ -335,21 +335,21 @@ class EnvNamespacedTest extends TestCase
         loadenv($this->envFile);
         $this->assertNull(env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE="null"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Exactly ');
+        file_put_contents($this->envFile, 'EXAMPLE="null"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Indeed ');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One  Exactly', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One  Indeed', env('EXAMPLE2'));
 
-        file_put_contents($this->envFile, 'EXAMPLE=null'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Exactly ');
+        file_put_contents($this->envFile, 'EXAMPLE=null'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Indeed ');
         loadenv($this->envFile);
-        $this->assertSame('Oh Nice One  Exactly', env('EXAMPLE2'));
+        $this->assertSame('Oh Nice One  Indeed', env('EXAMPLE2'));
     }
 
     public function testMustReturnProperTextReferenceOfReference()
     {
         file_put_contents($this->envFile, 'EXAMPLE="Nice"'.PHP_EOL.'EXAMPLE2="Oh${EXAMPLE}"'.PHP_EOL.'EXAMPLE3="${EXAMPLE2}One"'.PHP_EOL.'EXAMPLE4="${EXAMPLE3}Indeed"');
         loadenv($this->envFile);
-        $this->assertSame('OhNice', env('EXAMPLE2'));
-        $this->assertSame('OhNiceOne', env('EXAMPLE3'));
         $this->assertSame('OhNiceOneIndeed', env('EXAMPLE4'));
+        $this->assertSame('OhNiceOne', env('EXAMPLE3'));
+        $this->assertSame('OhNice', env('EXAMPLE2'));
     }
 }
