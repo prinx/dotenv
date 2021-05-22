@@ -45,7 +45,7 @@ class Dotenv
 
     public function convertSpecials()
     {
-        foreach ($this->env as $name => $value) {
+        foreach ($this->envFromFile as $name => $value) {
             if ($this->specialValue()->confirm($value)) {
                 $this->env[$name] = $this->specialValue()->convert($value);
             }
