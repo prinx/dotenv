@@ -1,8 +1,9 @@
 <div align="center">
 <h1>PHP Dotenv</h1>
 
-<a href="https://travis-ci.com/prinx/dotenv"><img src="https://travis-ci.com/prinx/dotenv.svg?branch=main"></a>
+[![tests](https://github.com/prinx/dotenv/actions/workflows/tests.yml/badge.svg)](https://github.com/prinx/dotenv/actions/workflows/tests.yml)
 <a href="https://travis-ci.com/prinx/dotenv"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+[![codecov](https://codecov.io/gh/prinx/dotenv/branch/main/graph/badge.svg?token=ZLK6TQXEDQ)](https://codecov.io/gh/prinx/dotenv)
 </div>
 
 Get easily access to environment variables.
