@@ -256,4 +256,31 @@ class EnvNamespacedTest extends TestCase
         loadEnv($this->envFile);
         $this->assertEquals('Oh Nice One aaa Exactly ', env('EXAMPLE2'));
     }
+
+    public function testMustReturnProperNullReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=null'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertNull(env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="null"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertNull(env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="Null"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertNull(env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="NULL"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertNull(env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="null"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Exactly ');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One  Exactly ', env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE=null'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Exactly ');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One  Exactly ', env('EXAMPLE2'));
+    }
 }

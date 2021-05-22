@@ -175,11 +175,7 @@ class Dotenv
 
             $ref = $matches[3];
 
-            if (!$this->envVariableExistsInMemory($ref)) {
-                continue;
-            }
-
-            $refValue = $this->env[$ref];
+            $refValue = $this->envVariableExistsInMemory($ref) ? $this->env[$ref] : null;
             $lineValue = $matches[2];
 
             if ('${'.$ref.'}' === $lineValue) {
@@ -248,7 +244,7 @@ class Dotenv
      */
     protected function envVariableExistsInMemory(string $name): bool
     {
-        return isset($this->env[$name]);
+        return array_key_exists($name, $this->env);
     }
 
     public function setPath(string $path)
