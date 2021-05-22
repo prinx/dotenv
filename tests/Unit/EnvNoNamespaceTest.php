@@ -95,6 +95,24 @@ class EnvNoNamespaceTest extends TestCase
         $this->assertEquals('123', dotenv()->get('EXAMPLE'));
     }
 
+    public function testMustReturnNullIfNullIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=null');
+        loadenv($this->envFile);
+
+        $this->assertEquals(null, env('EXAMPLE'));
+        $this->assertEquals(null, dotenv()->get('EXAMPLE'));
+    }
+
+    public function testMustReturnNullIfStringNullIsValue()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="null"');
+        loadenv($this->envFile);
+
+        $this->assertEquals(null, env('EXAMPLE'));
+        $this->assertEquals(null, dotenv()->get('EXAMPLE'));
+    }
+
     public function testRetrieveAllEnvVariables()
     {
         $allEnv = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
@@ -116,24 +134,54 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testPersistEnvVariable()
     {
-        $content = file_get_contents($this->envFile);
-
-        loadenv($this->envFile);
-
         persistEnv('PERSISTENCE', 'all_good');
+        $this->assertEquals('all_good', env('PERSISTENCE'));
 
-        $this->assertEquals('all_good', env('PERSISTENCE'), 'persist variable (writing directly to the .env file)');
+        persistEnv('BOOLEAN_TRUE', true);
+        $this->assertTrue(env('BOOLEAN_TRUE'));
 
-        file_put_contents($this->envFile, $content);
+        persistEnv('STRING_TRUE', 'true');
+        $this->assertTrue(env('STRING_TRUE'));
+
+        persistEnv('BOOLEAN_FALSE', false);
+        $this->assertFalse(env('BOOLEAN_FALSE'));
+
+        persistEnv('STRING_FALSE', 'false');
+        $this->assertFalse(env('STRING_FALSE'));
+
+        persistEnv('INTEGER', 123);
+        $this->assertIsInt(env('INTEGER'));
+        $this->assertEquals(123, env('INTEGER'));
+
+        persistEnv('STRING_INTEGER', '123');
+        $this->assertIsString(env('STRING_INTEGER'));
+        $this->assertEquals('123', env('STRING_INTEGER'));
     }
 
     public function testPersistEnvVariableWithDotenvClassInstance()
     {
         dotenv()->persist('PERSISTENCE', 'all_good');
+        $this->assertEquals('all_good', env('PERSISTENCE'));
 
-        loadenv($this->envFile);
+        dotenv()->persist('BOOLEAN_TRUE', true);
+        $this->assertTrue(env('BOOLEAN_TRUE'));
 
-        $this->assertEquals('all_good', env('PERSISTENCE'), 'Writing directly to the .env file using dotenv()->persist()');
+        dotenv()->persist('STRING_TRUE', 'true');
+        $this->assertTrue(env('STRING_TRUE'));
+
+        dotenv()->persist('BOOLEAN_FALSE', false);
+        $this->assertFalse(env('BOOLEAN_FALSE'));
+
+        dotenv()->persist('STRING_FALSE', 'false');
+        $this->assertFalse(env('STRING_FALSE'));
+
+        dotenv()->persist('INTEGER', 123);
+        $this->assertIsInt(env('INTEGER'));
+        $this->assertEquals(123, env('INTEGER'));
+
+        dotenv()->persist('STRING_INTEGER', '123');
+        $this->assertIsString(env('STRING_INTEGER'));
+        $this->assertEquals('123', env('STRING_INTEGER'));
     }
 
     public function testGetDefault()
@@ -143,12 +191,8 @@ class EnvNoNamespaceTest extends TestCase
         $this->assertEquals(true, env('DDDDDDDDD', true));
     }
 
-    public function testReturnProperReference()
+    public function testReturnProperBooleanReference()
     {
-        file_put_contents($this->envFile, 'EXAMPLE=123'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
-        loadEnv($this->envFile);
-        $this->assertEquals(123, env('EXAMPLE2'));
-
         file_put_contents($this->envFile, 'EXAMPLE=true'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
         loadEnv($this->envFile);
         $this->assertEquals(true, env('EXAMPLE2'));
@@ -164,9 +208,46 @@ class EnvNoNamespaceTest extends TestCase
         file_put_contents($this->envFile, 'EXAMPLE="false"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
         loadEnv($this->envFile);
         $this->assertEquals(false, env('EXAMPLE2'));
+    }
 
+    public function testMustReturnProperIntegerReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=123'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(123, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="123"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(123, env('EXAMPLE2'));
+    }
+
+    public function testMustReturnProperStringReference()
+    {
         file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
         loadEnv($this->envFile);
         $this->assertEquals('aaa', env('EXAMPLE2'));
+    }
+
+    public function testMustReturnProperTextReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2="OhNiceOne${EXAMPLE}Exactly"');
+        loadEnv($this->envFile);
+        $this->assertEquals('OhNiceOneaaaExactly', env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE=aaa'.PHP_EOL.'EXAMPLE2="Oh Nice One ${EXAMPLE}Exactly "');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One aaaExactly ', env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE}Exactly ');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One aaaExactly ', env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2=Oh Nice One ${EXAMPLE} Exactly ');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One aaa Exactly ', env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2 = Oh Nice One ${EXAMPLE} Exactly ');
+        loadEnv($this->envFile);
+        $this->assertEquals('Oh Nice One aaa Exactly ', env('EXAMPLE2'));
     }
 }
