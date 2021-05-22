@@ -19,7 +19,7 @@ namespace Prinx\Dotenv;
  * @param  mixed   $default
  * @return mixed
  */
-function env($key = null, $default = null)
+function env(string $key = null, $default = null)
 {
     $env = DotenvInstance::get();
 
@@ -40,7 +40,7 @@ function env($key = null, $default = null)
  * @param  mixed  $value
  * @return void
  */
-function addEnv($name, $value)
+function addEnv(string $name, $value)
 {
     $env = DotenvInstance::get();
 
@@ -52,10 +52,9 @@ function addEnv($name, $value)
  *
  * @param  string $name
  * @param  mixed  $value
- * @param  bool   $overwrite
  * @return void
  */
-function persistEnv($name, $value)
+function persistEnv(string $name, $value)
 {
     $env = DotenvInstance::get();
 

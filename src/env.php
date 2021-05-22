@@ -17,7 +17,7 @@ if (! function_exists('env') || __NAMESPACE__) {
      * @param  mixed   $default
      * @return mixed
      */
-    function env($key = null, $default = null)
+    function env(string $key = null, $default = null)
     {
         return Prinx\Dotenv\env(...(func_get_args()));
     }
@@ -31,7 +31,7 @@ if (! function_exists('addEnv') || __NAMESPACE__) {
      * @param  mixed  $value
      * @return void
      */
-    function addEnv($name, $value)
+    function addEnv(string $name, $value)
     {
         return Prinx\Dotenv\addEnv($name, $value);
     }
@@ -45,7 +45,7 @@ if (! function_exists('persistEnv') || __NAMESPACE__) {
      * @param  mixed  $value
      * @return void
      */
-    function persistEnv($name, $value)
+    function persistEnv(string $name, $value)
     {
         return Prinx\Dotenv\persistEnv(...(func_get_args()));
     }
