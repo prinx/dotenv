@@ -143,7 +143,7 @@ class Dotenv
      */
     protected function replaceReferences()
     {
-        if (!\file_exists($this->path)) {
+        if (! \file_exists($this->path)) {
             return $this;
         }
 
@@ -153,7 +153,7 @@ class Dotenv
         foreach ($env as $line) {
             $hasReference = preg_match($pattern, $line, $matches);
 
-            if (!$hasReference) {
+            if (! $hasReference) {
                 continue;
             }
 
