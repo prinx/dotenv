@@ -17,6 +17,11 @@ class Dotenv
     protected $env = [];
     protected $path = '';
 
+    /**
+     * @var SpecialValue
+     */
+    protected $specialValue;
+
     public function __construct($path = '')
     {
         $path = $path ?: realpath(__DIR__.'/../../../../.env');
@@ -29,17 +34,27 @@ class Dotenv
         $this->replaceReferences();
     }
 
+    public function specialValue()
+    {
+        if (is_null($this->specialValue)) {
+            $this->specialValue = new SpecialValue();
+        }
+
+        return $this->specialValue;
+    }
+
     public function convertSpecials()
     {
-        foreach ($this->env as $variable => $value) {
-            $special = strtolower($value);
-
-            if ($special === 'true' || $special === 'false') {
-                $this->env[$variable] = $special === 'true';
-            } elseif (is_numeric($value) && strval(intval($value)) === $value) {
-                $this->env[$variable] = intval($value);
+        foreach ($this->env as $name => $value) {
+            if ($this->specialValue()->confirm($value)) {
+                $this->env[$name] = $this->specialValue()->convert($value);
             }
         }
+    }
+
+    public function isSpecial($value)
+    {
+        return $this->specialValue()->confirm($value);
     }
 
     /**
@@ -149,25 +164,32 @@ class Dotenv
         }
 
         $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
-        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*(.*\$\{([a-zA-Z0-9_]+)\}.*)/';
+        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*["\']?([^"\']*\$\{([a-zA-Z0-9_]+)\}[^"\']*)["\']?/';
 
         foreach ($env as $line) {
-            if (preg_match($pattern, $line, $matches)) {
-                $ref = $matches[3];
+            $hasReference = preg_match($pattern, $line, $matches);
 
-                if (!$this->envVariableExistsInMemory($ref)) {
-                    continue;
-                }
-
-                $refValue = $this->env[$ref];
-                $lineValue = $matches[2];
-
-                $lineValueFormatted = preg_replace('/\$\{[a-zA-Z0-9_]+\}/', $refValue, $lineValue);
-
-                $lineValueFormatted = $this->properValueOfRef($refValue, $lineValueFormatted);
-
-                $this->env[$matches[1]] = $lineValueFormatted;
+            if (!$hasReference) {
+                continue;
             }
+
+            $ref = $matches[3];
+
+            if (!$this->envVariableExistsInMemory($ref)) {
+                continue;
+            }
+
+            $refValue = $this->env[$ref];
+            $lineValue = $matches[2];
+
+            if ('${'.$ref.'}' === $lineValue) {
+                $lineValueFormatted = $refValue;
+            } else {
+                $refValue = $this->specialValue()->reverse($refValue);
+                $lineValueFormatted = str_replace('${'.$ref.'}', $refValue, $lineValue);
+            }
+
+            $this->env[$matches[1]] = $lineValueFormatted;
         }
 
         return $this;

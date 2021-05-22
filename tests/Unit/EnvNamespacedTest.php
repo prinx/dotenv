@@ -178,4 +178,31 @@ class EnvNamespacedTest extends TestCase
         $this->assertEquals(123, env('DDDDDDDDD', 123));
         $this->assertEquals(true, env('DDDDDDDDD', true));
     }
+
+    public function testReturnProperReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=123'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(123, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE=true'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(true, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE=false'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(false, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="true"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(true, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="false"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals(false, env('EXAMPLE2'));
+
+        file_put_contents($this->envFile, 'EXAMPLE="aaa"'.PHP_EOL.'EXAMPLE2="${EXAMPLE}"');
+        loadEnv($this->envFile);
+        $this->assertEquals('aaa', env('EXAMPLE2'));
+    }
 }
