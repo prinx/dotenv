@@ -227,4 +227,4 @@ $dotenv->get('VARIABLE');
 
 ## License
 
-[MIT][LICENSE]
+[MIT](LICENSE)
