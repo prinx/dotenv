@@ -156,6 +156,15 @@ class EnvNamespacedTest extends TestCase
         $this->assertSame('No', env('EXAMPLE_3'), 'add env variable EXAMPLE_3 using dotenv()->add()');
     }
 
+    public function testAddEnvVariableViaReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
+
+        addEnv('EXAMPLE_2', '${EXAMPLE}');
+        $this->assertSame('aaa', env('EXAMPLE_2'), 'add env variable via reference');
+    }
+
     public function testPersistString()
     {
         loadenv($this->envFile);
@@ -223,6 +232,15 @@ class EnvNamespacedTest extends TestCase
 
         dotenv()->persist('STRING_FALSE', 'false');
         $this->assertFalse(env('STRING_FALSE'));
+    }
+
+    public function testPersistVariableViaReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
+
+        dotenv()->persist('EXAMPLE_2', '${EXAMPLE}');
+        $this->assertSame('aaa', env('EXAMPLE_2'), 'persist variable via reference');
     }
 
     public function testPersisMustThrowExceptionIfEnvFileDoesNotExist()
