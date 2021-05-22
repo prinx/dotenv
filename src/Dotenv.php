@@ -43,12 +43,15 @@ class Dotenv
         return $this->specialValue;
     }
 
-    public function convertSpecials()
+    public function convertAllSpecials()
     {
         foreach ($this->envFromFile as $name => $value) {
             if ($this->specialValue()->confirm($value)) {
                 $this->env[$name] = $this->specialValue()->convert($value);
+                continue;
             }
+
+            $this->env[$name] = $this->formatIfContainsReference($name, $value);
         }
     }
 
@@ -62,8 +65,7 @@ class Dotenv
      */
     public function all(): array
     {
-        $this->convertSpecials();
-        $this->replaceAllReferences();
+        $this->convertAllSpecials();
 
         return $this->env;
     }
@@ -77,7 +79,7 @@ class Dotenv
      */
     public function get(string $name = '', $default = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->all();
         }
 
@@ -180,20 +182,6 @@ class Dotenv
         }
 
         return $value;
-    }
-
-    /**
-     * Replace the references in the .env by their respective value.
-     *
-     * @return $this
-     */
-    protected function replaceAllReferences()
-    {
-        foreach ($this->envFromFile as $name => $value) {            
-            $this->env[$name] = $this->formatIfContainsReference($name, $value);
-        }
-
-        return $this;
     }
 
     public function setPath(string $path)
