@@ -115,7 +115,7 @@ class Dotenv
      */
     public function persist(string $name, $value)
     {
-        if (!file_exists($this->path)) {
+        if (! file_exists($this->path)) {
             throw new \RuntimeException('No env file found'.($this->path ? ' at '.$this->path : ''));
         }
 
