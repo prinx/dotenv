@@ -124,11 +124,11 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        file_put_contents($this->envFile, 'EXAMPLE=aaa'.PHP_EOL.'EXAMPLE2=${EXAMPLE}');
         loadenv($this->envFile);
         $this->directEnvInstance = Dotenv::load($this->envFile);
 
-        $all = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
+        $all = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa', 'EXAMPLE2' => 'aaa']);
 
         $this->assertSame($all, env(), 'Retrieving all env variables using env()');
         $this->assertSame($all, allenv(), 'Retrieving all env variables using allenv()');

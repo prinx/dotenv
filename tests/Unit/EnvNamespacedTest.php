@@ -130,11 +130,11 @@ class EnvNamespacedTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        file_put_contents($this->envFile, 'EXAMPLE=aaa'.PHP_EOL.'EXAMPLE2=${EXAMPLE}');
         loadenv($this->envFile);
         $this->directEnvInstance = Dotenv::load($this->envFile);
 
-        $all = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
+        $all = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa', 'EXAMPLE2' => 'aaa']);
 
         $this->assertSame($all, env(), 'Retrieving all env variables using env()');
         $this->assertSame($all, allenv(), 'Retrieving all env variables using allenv()');
@@ -142,6 +142,8 @@ class EnvNamespacedTest extends TestCase
         $this->assertSame($all, dotenv()->get(), 'Retrieving all env variables using dotenv()->get()');
         $this->assertSame($all, $this->directEnvInstance->get(), 'Retrieving all env variables using $this->directEnvInstance->get()');
         $this->assertSame($all, $this->directEnvInstance->all(), 'Retrieving all env variables using $this->directEnvInstance->all()');
+
+
     }
 
     public function testAddEnvVariable()

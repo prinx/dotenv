@@ -63,7 +63,7 @@ class Dotenv
     public function all(): array
     {
         $this->convertSpecials();
-        $this->replaceReferences();
+        $this->replaceAllReferences();
 
         return $this->env;
     }
@@ -187,30 +187,10 @@ class Dotenv
      *
      * @return $this
      */
-    protected function replaceReferences()
+    protected function replaceAllReferences()
     {
-        $pattern = '/^[ ]*["\']?([^"\']*\$\{([a-zA-Z0-9_]+)\}[^"\']*)["\']?/';
-
-        foreach ($this->env as $line) {
-            $hasReference = preg_match($pattern, $line, $matches);
-
-            if (!$hasReference) {
-                continue;
-            }
-
-            $ref = $matches[3];
-
-            $refValue = $this->env[$ref] ?? null;
-            $lineValue = $matches[2];
-
-            if ('${'.$ref.'}' === $lineValue) {
-                $lineValueFormatted = $refValue;
-            } else {
-                $refValue = $this->specialValue()->reverse($refValue);
-                $lineValueFormatted = str_replace('${'.$ref.'}', $refValue, $lineValue);
-            }
-
-            $this->env[$matches[1]] = $lineValueFormatted;
+        foreach ($this->envFromFile as $name => $value) {            
+            $this->env[$name] = $this->formatIfContainsReference($name, $value);
         }
 
         return $this;
