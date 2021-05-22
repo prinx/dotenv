@@ -15,6 +15,7 @@ namespace Prinx\Dotenv;
 class Dotenv
 {
     protected $env = [];
+    protected $envFromFile = [];
     protected $path = '';
 
     /**
@@ -24,14 +25,13 @@ class Dotenv
 
     public function __construct($path = '')
     {
-        $path = $path ?: realpath(__DIR__.'/../../../../.env');
-        $this->setPath($path);
+        $this->setPath($path ?: realpath(__DIR__.'/../../../../.env'));
 
-        $env = \file_exists($this->path) ? \parse_ini_file($this->path, false, INI_SCANNER_RAW) : [];
-        $this->env = array_merge($_ENV, getenv(), $env);
+        if (file_exists($this->path)) {
+            $this->envFromFile = parse_ini_file($this->path, false, INI_SCANNER_RAW);
+        }
 
-        $this->convertSpecials();
-        $this->replaceReferences();
+        $this->env = array_merge($_ENV, getenv(), $this->envFromFile);
     }
 
     public function specialValue()
@@ -62,6 +62,9 @@ class Dotenv
      */
     public function all(): array
     {
+        $this->convertSpecials();
+        $this->replaceReferences();
+
         return $this->env;
     }
 
@@ -78,7 +81,13 @@ class Dotenv
             return $this->all();
         }
 
-        return $this->env[$name] ?? $default;
+        if (array_key_exists($name, $this->env)) {
+            $value = $this->formatIfContainsReference($name, $this->env[$name]);
+
+            return $this->specialValue()->convert($value);
+        }
+
+        return $default;
     }
 
     /**
@@ -105,7 +114,7 @@ class Dotenv
     public function persist(string $name, $value)
     {
         if (!file_exists($this->path)) {
-            throw new \RuntimeException('No env file found'.($this->path ? ' at '. $this->path : ''));
+            throw new \RuntimeException('No env file found'.($this->path ? ' at '.$this->path : ''));
         }
 
         $pattern = '/'.$name.'[ ]*=.*/';
@@ -140,6 +149,39 @@ class Dotenv
         return new self($path);
     }
 
+    public function formatIfContainsReference($name, $value)
+    {
+        $pattern = '/\$\{([a-zA-Z0-9_]+)\}/';
+
+        $referenceCount = preg_match_all($pattern, $value, $matches);
+
+        while ($referenceCount) {
+            foreach ($matches[1] as $key => $ref) {
+                if ($ref === $name) {
+                    throw new \LogicException('Cannot reference to the same variable.');
+                }
+
+                $refValue = $this->env[$ref] ?? null;
+                $refValue = $this->specialValue()->reverse($refValue);
+
+                // $fullMatch = '${'.$ref.'}';
+                $fullMatch = $matches[0][$key];
+                if ($fullMatch === $value) {
+                    return $refValue;
+                }
+
+                var_dump($value);
+                $value = str_replace($fullMatch, $refValue, $value);
+                var_dump($value);
+
+            }
+
+            $referenceCount = preg_match_all($pattern, $value, $matches);
+        }
+
+        return $value;
+    }
+
     /**
      * Replace the references in the .env by their respective value.
      *
@@ -147,14 +189,9 @@ class Dotenv
      */
     protected function replaceReferences()
     {
-        if (!\file_exists($this->path)) {
-            return $this;
-        }
+        $pattern = '/^[ ]*["\']?([^"\']*\$\{([a-zA-Z0-9_]+)\}[^"\']*)["\']?/';
 
-        $env = file($this->path, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES);
-        $pattern = '/^([^#;][a-zA-Z0-9_]+)[ ]*=[ ]*["\']?([^"\']*\$\{([a-zA-Z0-9_]+)\}[^"\']*)["\']?/';
-
-        foreach ($env as $line) {
+        foreach ($this->env as $line) {
             $hasReference = preg_match($pattern, $line, $matches);
 
             if (!$hasReference) {
