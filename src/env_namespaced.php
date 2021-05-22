@@ -40,7 +40,7 @@ function env(string $key = null, $default = null)
  * @param  mixed  $value
  * @return void
  */
-function addEnv(string $name, $value)
+function addenv(string $name, $value)
 {
     $env = DotenvInstance::get();
 
@@ -54,7 +54,7 @@ function addEnv(string $name, $value)
  * @param  mixed  $value
  * @return void
  */
-function persistEnv(string $name, $value)
+function persistenv(string $name, $value)
 {
     $env = DotenvInstance::get();
 
@@ -66,7 +66,7 @@ function persistEnv(string $name, $value)
  *
  * @return array
  */
-function allEnv()
+function allenv()
 {
     $env = DotenvInstance::get();
 
@@ -89,7 +89,7 @@ function dotenv()
  * @param  string $path
  * @return void
  */
-function loadEnv($path = null)
+function loadenv($path = null)
 {
     DotenvInstance::load($path);
 }

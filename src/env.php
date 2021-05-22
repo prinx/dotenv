@@ -23,7 +23,7 @@ if (! function_exists('env') || __NAMESPACE__) {
     }
 }
 
-if (! function_exists('addEnv') || __NAMESPACE__) {
+if (! function_exists('addenv') || __NAMESPACE__) {
     /**
      * Add a temporary environment variable to the current loaded environment variables.
      *
@@ -31,13 +31,13 @@ if (! function_exists('addEnv') || __NAMESPACE__) {
      * @param  mixed  $value
      * @return void
      */
-    function addEnv(string $name, $value)
+    function addenv(string $name, $value)
     {
-        return Prinx\Dotenv\addEnv($name, $value);
+        return Prinx\Dotenv\addenv($name, $value);
     }
 }
 
-if (! function_exists('persistEnv') || __NAMESPACE__) {
+if (! function_exists('persistenv') || __NAMESPACE__) {
     /**
      * Write an environment variable to the loaded .env file.
      *
@@ -45,21 +45,21 @@ if (! function_exists('persistEnv') || __NAMESPACE__) {
      * @param  mixed  $value
      * @return void
      */
-    function persistEnv(string $name, $value)
+    function persistenv(string $name, $value)
     {
-        return Prinx\Dotenv\persistEnv(...(func_get_args()));
+        return Prinx\Dotenv\persistenv(...(func_get_args()));
     }
 }
 
-if (! function_exists('allEnv') || __NAMESPACE__) {
+if (! function_exists('allenv') || __NAMESPACE__) {
     /**
      * Returns all the environment variables in the .env file as an array.
      *
      * @return array
      */
-    function allEnv()
+    function allenv()
     {
-        return Prinx\Dotenv\allEnv();
+        return Prinx\Dotenv\allenv();
     }
 }
 
@@ -75,15 +75,15 @@ if (! function_exists('dotenv') || __NAMESPACE__) {
     }
 }
 
-if (! function_exists('loadEnv') || __NAMESPACE__) {
+if (! function_exists('loadenv') || __NAMESPACE__) {
     /**
      * Load a specific .env file.
      *
      * @param  string $path
      * @return void
      */
-    function loadEnv($path = null)
+    function loadenv($path = null)
     {
-        return Prinx\Dotenv\loadEnv($path);
+        return Prinx\Dotenv\loadenv($path);
     }
 }
