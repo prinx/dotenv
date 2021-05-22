@@ -334,4 +334,13 @@ class EnvNoNamespaceTest extends TestCase
         loadenv($this->envFile);
         $this->assertSame('Oh Nice One  Exactly', env('EXAMPLE2'));
     }
+
+    public function testMustReturnProperTextReferenceOfReference()
+    {
+        file_put_contents($this->envFile, 'EXAMPLE="Nice"'.PHP_EOL.'EXAMPLE2="Oh${EXAMPLE}"'.PHP_EOL.'EXAMPLE3="${EXAMPLE2}One"'.PHP_EOL.'EXAMPLE4="${EXAMPLE3}Indeed"');
+        loadenv($this->envFile);
+        $this->assertSame('OhNice', env('EXAMPLE2'));
+        $this->assertSame('OhNiceOne', env('EXAMPLE3'));
+        $this->assertSame('OhNiceOneIndeed', env('EXAMPLE4'));
+    }
 }
