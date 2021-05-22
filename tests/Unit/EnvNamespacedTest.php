@@ -354,4 +354,12 @@ class EnvNamespacedTest extends TestCase
         $this->assertSame('OhNiceOne', env('EXAMPLE3'));
         $this->assertSame('OhNice', env('EXAMPLE2'));
     }
+
+    public function testMustThrowExceptionIfReferenceSameValue()
+    {
+        $this->expectException(\LogicException::class);
+        file_put_contents($this->envFile, 'EXAMPLE="${EXAMPLE}"');
+        loadenv($this->envFile);
+        env('EXAMPLE');
+    }
 }
