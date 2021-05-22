@@ -12,8 +12,6 @@ class EnvNoNamespaceTest extends TestCase
     public function setUp(): void
     {
         $this->envFile = realpath(__DIR__.'/../../.env.example');
-        file_put_contents($this->envFile, 'EXAMPLE=aaa');
-        loadenv($this->envFile);
     }
 
     public function tearDown(): void
@@ -21,15 +19,20 @@ class EnvNoNamespaceTest extends TestCase
         file_put_contents($this->envFile, '');
     }
 
-    public function testloadenv()
+    public function testLoadEnvWithDotenvFunction()
     {
         $this->assertInstanceOf(Dotenv::class, dotenv(), 'Test Env load');
     }
 
     public function testRetrieveEnvVariable()
     {
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
+        $this->directEnvInstance = Dotenv::load($this->envFile);
+
         $this->assertEquals('aaa', env('EXAMPLE'), 'Retrieve env variable EXAMPLE with env()');
         $this->assertEquals('aaa', dotenv()->get('EXAMPLE'), 'Retrieve env variable EXAMPLE with dotenv()->get()');
+        $this->assertEquals('aaa', $this->directEnvInstance->get('EXAMPLE'), 'Retrieve env variable EXAMPLE with Dotenv::load($path)->get()');
     }
 
     public function testMustReturnBooleanTrueIfBooleanTrueIsValue()
@@ -115,16 +118,25 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testRetrieveAllEnvVariables()
     {
-        $allEnv = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
+        $this->directEnvInstance = Dotenv::load($this->envFile);
 
-        $this->assertEquals($allEnv, env(), 'Retrieving all env variables using env()');
-        $this->assertEquals($allEnv, allEnv(), 'Retrieving all env variables using allEnv()');
-        $this->assertEquals($allEnv, dotenv()->all(), 'Retrieving all env variables using dotenv()->all()');
-        $this->assertEquals($allEnv, dotenv()->get(), 'Retrieving all env variables using dotenv()->all()');
+        $all = array_merge($_ENV, getenv(), ['EXAMPLE' => 'aaa']);
+
+        $this->assertEquals($all, env(), 'Retrieving all env variables using env()');
+        $this->assertEquals($all, allEnv(), 'Retrieving all env variables using allEnv()');
+        $this->assertEquals($all, dotenv()->all(), 'Retrieving all env variables using dotenv()->all()');
+        $this->assertEquals($all, dotenv()->get(), 'Retrieving all env variables using dotenv()->get()');
+        $this->assertEquals($all, $this->directEnvInstance->get(), 'Retrieving all env variables using $this->directEnvInstance->get()');
+        $this->assertEquals($all, $this->directEnvInstance->all(), 'Retrieving all env variables using $this->directEnvInstance->all()');
     }
 
     public function testAddEnvVariable()
     {
+        file_put_contents($this->envFile, 'EXAMPLE=aaa');
+        loadenv($this->envFile);
+
         addEnv('EXAMPLE_2', 'Yes');
         $this->assertEquals('Yes', env('EXAMPLE_2'), 'add env variable EXAMPLE_2');
 
@@ -134,6 +146,8 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testPersistEnvVariable()
     {
+        loadenv($this->envFile);
+
         persistEnv('PERSISTENCE', 'all_good');
         $this->assertEquals('all_good', env('PERSISTENCE'));
 
@@ -160,6 +174,8 @@ class EnvNoNamespaceTest extends TestCase
 
     public function testPersistEnvVariableWithDotenvClassInstance()
     {
+        loadenv($this->envFile);
+        
         dotenv()->persist('PERSISTENCE', 'all_good');
         $this->assertEquals('all_good', env('PERSISTENCE'));
 
