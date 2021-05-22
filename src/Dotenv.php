@@ -159,7 +159,7 @@ class Dotenv
 
             $ref = $matches[3];
 
-            $refValue = $this->envVariableExistsInMemory($ref) ? $this->env[$ref] : null;
+            $refValue = $this->env[$ref] ?? null;
             $lineValue = $matches[2];
 
             if ('${'.$ref.'}' === $lineValue) {
@@ -173,62 +173,6 @@ class Dotenv
         }
 
         return $this;
-    }
-
-    /**
-     * Assign the proper type of the reference to the replaced value.
-     *
-     * @param mixed $refValue
-     * @param mixed $lineValue
-     */
-    protected function properValueOfRef($refValue, $lineValue): string
-    {
-        if ($this->valueSameAsReference($refValue, $lineValue)) {
-            settype($lineValue, gettype($refValue));
-        }
-
-        return $lineValue;
-    }
-
-    /**
-     * Check the value is the same as it reference (It is not inside a sentence for exemple).
-     *
-     * @param mixed $refValue
-     * @param mixed $lineValue
-     */
-    protected function valueSameAsReference($refValue, $lineValue): bool
-    {
-        $refValueString = '';
-        $refValueType = gettype($refValue);
-
-        if ($this->isStringifiable($refValue)) {
-            $refValueString = strval($lineValue);
-        }
-
-        return $refValueString === $lineValue;
-    }
-
-    /**
-     * Check if var can be converted to string.
-     *
-     * @param mixed $var
-     *
-     * @see https://stackoverflow.com/a/5496674
-     */
-    protected function isStringifiable($var): bool
-    {
-        return
-        !is_array($var) &&
-            ((!is_object($var) && settype($var, 'string') !== false) ||
-            (is_object($var) && method_exists($var, '__toString')));
-    }
-
-    /**
-     * Determines if an environment variables exists.
-     */
-    protected function envVariableExistsInMemory(string $name): bool
-    {
-        return array_key_exists($name, $this->env);
     }
 
     public function setPath(string $path)

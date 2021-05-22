@@ -41,22 +41,40 @@ class SpecialValue
 
     public function isBool($value)
     {
-        return in_array(strtolower($value), [true, false, 'true', 'false'], true);
+        if (is_bool($value)) {
+            return true;
+        }
+
+        $lower = strtolower($value);
+
+        return $lower === 'true' || $lower === 'false';
     }
 
     public function convertToBool($value)
     {
+        if (is_bool($value)) {
+            return $value;
+        }
+
         return strtolower($value) === 'true';
     }
 
-    public function reverseBool(bool $value)
+    public function reverseBool($value)
     {
-        return $value === false ? 'false' : 'true';
+        if (is_bool($value)) {
+            return $value === false ? 'false' : 'true';
+        }
+
+        return strtolower($value) === 'true' ? 'true' : 'false';
     }
 
     public function isNull($value)
     {
-        return in_array(strtolower($value), [null, 'null'], true);
+        if (is_null($value)) {
+            return true;
+        }
+
+        return strtolower($value) === 'null';
     }
 
     public function convertToNull($value)
@@ -66,6 +84,6 @@ class SpecialValue
 
     public function reverseNull($value)
     {
-        return 'null';
+        return null;
     }
 }
