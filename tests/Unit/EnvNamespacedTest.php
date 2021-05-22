@@ -4,12 +4,12 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Prinx\Dotenv\Dotenv;
-use function Prinx\Dotenv\addEnv;
-use function Prinx\Dotenv\allEnv;
+use function Prinx\Dotenv\addenv;
+use function Prinx\Dotenv\allenv;
 use function Prinx\Dotenv\dotenv;
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\loadenv;
-use function Prinx\Dotenv\persistEnv;
+use function Prinx\Dotenv\persistenv;
 
 class EnvNamespacedTest extends TestCase
 {
