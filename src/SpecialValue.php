@@ -4,7 +4,7 @@ namespace Prinx\Dotenv;
 
 class SpecialValue
 {
-    protected $valueTypes = ['Bool', 'Integer'];
+    protected $valueTypes = ['Bool', 'Null', 'Integer'];
 
     public function confirm($value)
     {
@@ -52,6 +52,21 @@ class SpecialValue
     public function reverseBool(bool $value)
     {
         return $value === false ? 'false' : 'true';
+    }
+
+    public function isNull($value)
+    {
+        return in_array(strtolower($value), [null, 'null'], true);
+    }
+
+    public function convertToNull($value)
+    {
+        return null;
+    }
+
+    public function reverseNull($value)
+    {
+        return 'null';
     }
 
     public function isInteger($value)
