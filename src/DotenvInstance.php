@@ -24,7 +24,7 @@ class DotenvInstance
      */
     public static function get()
     {
-        if (!self::$envInstance) {
+        if (! self::$envInstance) {
             self::load();
         }
 
