@@ -222,7 +222,7 @@ $dotenv->get('VARIABLE');
 - Give a star to the repo :grin:
 - Fork the repo.
 - Correct a bug, add a new feature.
-- Write tests :fire:
+- Write tests.
 - Create a pull request.
 
 ## License

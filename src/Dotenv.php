@@ -104,6 +104,10 @@ class Dotenv
      */
     public function persist(string $name, $value)
     {
+        if (!file_exists($this->path)) {
+            throw new \RuntimeException('No env file found'.($this->path ? ' at '. $this->path : ''));
+        }
+
         $pattern = '/'.$name.'[ ]*=.*/';
         $content = \file_get_contents($this->path);
         $envVariableExistsInFile = preg_match($pattern, $content);

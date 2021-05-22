@@ -225,6 +225,13 @@ class EnvNamespacedTest extends TestCase
         $this->assertFalse(env('STRING_FALSE'));
     }
 
+    public function testPersisMustThrowExceptionIfEnvFileDoesNotExist()
+    {
+        $this->expectException(\RuntimeException::class);
+        dotenv()->setPath('.unexistant');
+        dotenv()->persist('EXAMPLE', 'aaa');
+    }
+
     public function testGetDefault()
     {
         $this->assertSame('abcd', env('DDDDDDDDD', 'abcd'));
