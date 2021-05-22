@@ -219,7 +219,7 @@ $dotenv->get('VARIABLE');
 
 ## Contributing
 
-- Give a star to the repo :grin:
+- Give a star to the repo :relaxed:
 - Fork the repo.
 - Correct a bug, add a new feature.
 - Write tests.
