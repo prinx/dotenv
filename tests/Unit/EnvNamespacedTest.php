@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Prinx\Dotenv\Dotenv;
 use function Prinx\Dotenv\addEnv;
 use function Prinx\Dotenv\allEnv;
+use Prinx\Dotenv\Dotenv;
 use function Prinx\Dotenv\dotenv;
 use function Prinx\Dotenv\env;
 use function Prinx\Dotenv\loadenv;
