@@ -172,10 +172,7 @@ class Dotenv
                     return $refValue;
                 }
 
-                var_dump($value);
                 $value = str_replace($fullMatch, $refValue, $value);
-                var_dump($value);
-
             }
 
             $referenceCount = preg_match_all($pattern, $value, $matches);
